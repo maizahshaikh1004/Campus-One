@@ -20,12 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-n6a_1f8g&lujidymo^_=khc8ae$@#a0$-ri-3!@-5g3!@apehp'
+SECRET_KEY = 'your_django_secret_key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["10.155.8.96","127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1"]
 
 
 # Application definition
@@ -78,7 +78,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'campus_one_db',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'your_password',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
@@ -143,7 +143,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'campusone00@gmail.com'
-EMAIL_HOST_PASSWORD = 'mwnaqgawvfomqlzc'
+EMAIL_HOST_USER = 'your_email'
+EMAIL_HOST_PASSWORD = 'your_password'
 
-DEFAULT_FROM_EMAIL = 'CampusOne <campusone00@gmail.com>'
+DEFAULT_FROM_EMAIL = 'CampusOne <your@email.com>'
