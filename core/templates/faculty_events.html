@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% if readonly %}All Events{% else %}My Events{% endif %} - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 1300px; margin: 0 auto; padding: 2rem; }
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.count-badge {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+body.dark-mode .count-badge { background: #1e3a8a; color: #bfdbfe; }
+
+/* Filter Tabs */
+.filter-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .filter-panel { background: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    gap: 0.4rem;
+    background: #f1f5f9;
+    padding: 0.3rem;
+    border-radius: 8px;
+}
+
+body.dark-mode .filter-group { background: #334155; }
+
+.filter-tab {
+    padding: 0.4rem 0.875rem;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+body.dark-mode .filter-tab { color: #94a3b8; }
+
+.filter-tab:hover { color: #475569; }
+body.dark-mode .filter-tab:hover { color: #cbd5e1; }
+
+.filter-tab.active {
+    background: white;
+    color: #2563eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .filter-tab.active { background: #1e293b; color: #60a5fa; }
+
+/* Event Cards */
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 1.5rem;
+}
+
+.event-card {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+body.dark-mode .event-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    border-color: #e2e8f0;
+}
+
+body.dark-mode .event-card:hover { border-color: #334155; }
+
+/* Poster */
+.event-poster {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: #f1f5f9;
+}
+
+body.dark-mode .event-poster { background: #0f172a; }
+
+.event-poster-placeholder {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #dbeafe 0%, #c7d2fe 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+}
+
+body.dark-mode .event-poster-placeholder {
+    background: linear-gradient(135deg, #1e3a8a 0%, #4c1d95 100%);
+}
+
+/* Event Body */
+.event-body { padding: 1.5rem; }
+
+.event-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+body.dark-mode .event-title { color: #f1f5f9; }
+
+.event-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+body.dark-mode .meta-item { color: #94a3b8; }
+
+.meta-item strong {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+body.dark-mode .meta-item strong { color: #e2e8f0; }
+
+/* Scope Badge */
+.scope-badge {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.badge-global { background: #dcfce7; color: #166534; }
+body.dark-mode .badge-global { background: #14532d; color: #86efac; }
+
+.badge-dept { background: #fef3c7; color: #92400e; }
+body.dark-mode .badge-dept { background: #78350f; color: #fde68a; }
+
+/* Actions */
+.event-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+}
+
+body.dark-mode .event-actions { border-top-color: #334155; }
+
+.btn {
+    padding: 0.45rem 0.875rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.btn-view { background: #dbeafe; color: #1e40af; }
+.btn-view:hover { background: #bfdbfe; transform: translateY(-1px); }
+body.dark-mode .btn-view { background: #1e3a8a; color: #bfdbfe; }
+
+.btn-assign { background: #dcfce7; color: #166534; }
+.btn-assign:hover { background: #bbf7d0; transform: translateY(-1px); }
+body.dark-mode .btn-assign { background: #14532d; color: #86efac; }
+
+.btn-edit { background: #fef3c7; color: #92400e; }
+.btn-edit:hover { background: #fde68a; transform: translateY(-1px); }
+body.dark-mode .btn-edit { background: #78350f; color: #fde68a; }
+
+.btn-delete { background: #fee2e2; color: #991b1b; }
+.btn-delete:hover { background: #fecaca; transform: translateY(-1px); }
+body.dark-mode .btn-delete { background: #7f1d1d; color: #fca5a5; }
+
+/* Empty State */
+.empty-state {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    gap: 1rem;
+    text-align: center;
+}
+
+body.dark-mode .empty-state { background: #1e293b; }
+
+.empty-icon {
+    width: 72px;
+    height: 72px;
+    background: #fef3c7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+body.dark-mode .empty-icon { background: #78350f30; }
+
+.empty-state h3 { font-size: 1.1rem; font-weight: 600; color: #475569; }
+body.dark-mode .empty-state h3 { color: #94a3b8; }
+.empty-state p { font-size: 0.9rem; color: #94a3b8; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .events-grid { grid-template-columns: 1fr; }
+    .filter-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="
+        {% if request.session.role == 'ADMIN' %}{% url 'admin_dashboard' %}
+        {% elif request.session.role == 'FACULTY' %}{% url 'faculty_dashboard' %}
+        {% else %}{% url 'student_dashboard' %}{% endif %}
+        " class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>🎉</span>
+            <span>{% if readonly %}All Events{% else %}My Events{% endif %}</span>
+        </h1>
+        {% if events %}
+        <div class="count-badge" id="countBadge">{{ events|length }} Events</div>
+        {% endif %}
+    </div>
+
+    {% if events %}
+
+    <!-- Filters -->
+    <div class="filter-panel">
+        <div class="filter-row">
+            <div class="filter-group">
+                <button class="filter-tab active" data-type="scope" data-value="all">All</button>
+                <button class="filter-tab" data-type="scope" data-value="global">🌐 Global</button>
+                <button class="filter-tab" data-type="scope" data-value="department">🏢 Department</button>
+            </div>
+            <div class="filter-group">
+                <button class="filter-tab active" data-type="status" data-value="all">All Status</button>
+                <button class="filter-tab" data-type="status" data-value="upcoming">📅 Upcoming</button>
+                <button class="filter-tab" data-type="status" data-value="ongoing">🟢 Ongoing</button>
+                <button class="filter-tab" data-type="status" data-value="completed">✅ Completed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="events-grid">
+        {% for item in events %}
+        {% with e=item.event %}
+        <div class="event-card"
+             data-scope="{% if e.7 %}department{% else %}global{% endif %}"
+             data-date="{{ e.2 }}"
+             data-start="{{ e.3 }}"
+             data-end="{{ e.4 }}">
+
+            <!-- Poster -->
+            {% if e.6 %}
+                <img src="/media/{{ e.6 }}" alt="{{ e.1 }}" class="event-poster">
+            {% else %}
+                <div class="event-poster-placeholder">🎉</div>
+            {% endif %}
+
+            <!-- Body -->
+            <div class="event-body">
+                <div class="event-title">{{ e.1 }}</div>
+
+                <!-- Scope Badge -->
+                {% if e.7 %}
+                    <span class="scope-badge badge-dept">🏢 {{ e.7 }} · Sem {{ e.8 }}</span>
+                {% else %}
+                    <span class="scope-badge badge-global">🌐 Global</span>
+                {% endif %}
+
+                <!-- Meta -->
+                <div class="event-meta">
+                    <div class="meta-item">
+                        <span>📅</span>
+                        <strong>{{ e.2 }}</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span>⏰</span>
+                        <span>{{ e.3 }} – {{ e.4 }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>📍</span>
+                        <span>{{ e.5 }}</span>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="event-actions">
+                    <a href="{% url 'event_detail' e.0 %}" class="btn btn-view">
+                        <span>👁️</span>
+                        <span>View</span>
+                    </a>
+
+                    {% if not readonly %}
+                        {% if item.can_assign %}
+                        <a href="{% url 'assign_event_coordinators' e.0 %}" class="btn btn-assign">
+                            <span>👥</span>
+                            <span>Coordinators</span>
+                        </a>
+                        {% endif %}
+
+                        {% if item.can_edit %}
+                        <a href="{% url 'edit_event' e.0 %}" class="btn btn-edit">
+                            <span>✏️</span>
+                            <span>Edit</span>
+                        </a>
+                        {% endif %}
+
+                        {% if item.can_delete %}
+                        <a href="{% url 'delete_event' e.0 %}"
+                           onclick="return confirm('Delete this event?')"
+                           class="btn btn-delete">
+                            <span>🗑️</span>
+                            <span>Delete</span>
+                        </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </div>
+
+    {% else %}
+
+    <!-- Empty State -->
+    <div class="empty-state">
+        <div class="empty-icon">🎉</div>
+        <h3>No Events Yet</h3>
+        <p>{% if readonly %}No events have been created.{% else %}You haven't created any events yet.{% endif %}</p>
+    </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Filters
+const filterTabs = document.querySelectorAll('.filter-tab');
+const cards = document.querySelectorAll('.event-card');
+const countBadge = document.getElementById('countBadge');
+const totalCount = cards.length;
+
+let activeScope = 'all';
+let activeStatus = 'all';
+
+filterTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        const type = tab.dataset.type;
+        const value = tab.dataset.value;
+
+        // Update active tab in the same group
+        document.querySelectorAll(`.filter-tab[data-type="${type}"]`).forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Update filters
+        if (type === 'scope') activeScope = value;
+        if (type === 'status') activeStatus = value;
+
+        applyFilters();
+    });
+});
+
+function applyFilters() {
+    const now = new Date();
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        const scope = card.dataset.scope;
+        const eventDate = new Date(card.dataset.date);
+        const startTime = card.dataset.start;
+        const endTime = card.dataset.end;
+        
+        // Scope filter
+        let matchScope = (activeScope === 'all') || (scope === activeScope);
+
+        // Status filter
+        let matchStatus = false;
+        if (activeStatus === 'all') {
+            matchStatus = true;
+        } else if (activeStatus === 'upcoming') {
+            matchStatus = eventDate > now;
+        } else if (activeStatus === 'completed') {
+            matchStatus = eventDate < now;
+        } else if (activeStatus === 'ongoing') {
+            const todayStr = now.toISOString().split('T')[0];
+            const eventDateStr = card.dataset.date;
+            matchStatus = (eventDateStr === todayStr);
+        }
+
+        // Show/hide card
+        const isVisible = matchScope && matchStatus;
+        card.style.display = isVisible ? 'block' : 'none';
+        if (isVisible) visibleCount++;
+    });
+
+    // Update count badge
+    if (countBadge) {
+        if (visibleCount === totalCount) {
+            countBadge.textContent = `${totalCount} Events`;
+        } else {
+            countBadge.textContent = `${visibleCount} of ${totalCount} Events`;
+        }
+    }
+}
+</script>
+
+</body>
+</html>

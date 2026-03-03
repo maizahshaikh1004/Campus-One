@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Attendance Report - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 1300px; margin: 0 auto; padding: 2rem; }
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+/* Filter Panel */
+.filter-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+body.dark-mode .filter-panel { background: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+.filter-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+body.dark-mode .filter-title { color: #94a3b8; }
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: 2fr repeat(4, 1fr) auto;
+    gap: 0.875rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.filter-group label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
+body.dark-mode .filter-group label { color: #94a3b8; }
+
+.filter-group input,
+.filter-group select {
+    padding: 0.625rem 0.875rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: #1e293b;
+    background: white;
+    transition: all 0.2s;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+}
+
+body.dark-mode .filter-group input,
+body.dark-mode .filter-group select {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+body.dark-mode .filter-group input:focus,
+body.dark-mode .filter-group select:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.1);
+}
+
+.filter-group input::placeholder { color: #94a3b8; }
+select option { background: white; color: #1e293b; }
+body.dark-mode select option { background: #334155; color: #f1f5f9; }
+
+select:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; opacity: 0.6; }
+body.dark-mode select:disabled { background: #1e293b; color: #64748b; }
+
+.btn-apply {
+    padding: 0.625rem 1.25rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    height: fit-content;
+}
+
+.btn-apply:hover { background: #1d4ed8; transform: translateY(-1px); }
+body.dark-mode .btn-apply { background: #60a5fa; color: #0f172a; }
+
+/* Active filter chips */
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+body.dark-mode .active-filters { border-top-color: #334155; }
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+
+body.dark-mode .filter-chip { background: #1e3a8a; color: #bfdbfe; }
+
+/* Summary Row */
+.summary-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+}
+
+body.dark-mode .summary-card { background: #1e293b; }
+
+.summary-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.summary-icon.total  { background: #dbeafe; }
+.summary-icon.short  { background: #fee2e2; }
+.summary-icon.good   { background: #dcfce7; }
+
+body.dark-mode .summary-icon.total { background: #1e3a8a; }
+body.dark-mode .summary-icon.short { background: #7f1d1d; }
+body.dark-mode .summary-icon.good  { background: #14532d; }
+
+.summary-num {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1;
+}
+
+body.dark-mode .summary-num { color: #f1f5f9; }
+
+.summary-label {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 0.2rem;
+    font-weight: 500;
+}
+
+body.dark-mode .summary-label { color: #94a3b8; }
+
+/* Table Card */
+.table-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+body.dark-mode .table-card { background: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+.table-wrapper { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; min-width: 750px; }
+
+thead { background: #f8fafc; border-bottom: 2px solid #e2e8f0; }
+body.dark-mode thead { background: #0f172a; border-bottom-color: #334155; }
+
+th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+body.dark-mode th { color: #94a3b8; }
+
+td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.9rem;
+    color: #334155;
+    vertical-align: middle;
+}
+
+body.dark-mode td { border-bottom-color: #334155; color: #cbd5e1; }
+
+tbody tr { transition: background 0.15s; }
+tbody tr:hover { background: #f8fafc; }
+body.dark-mode tbody tr:hover { background: #334155; }
+tbody tr:last-child td { border-bottom: none; }
+
+/* Student cell */
+.student-cell { display: flex; align-items: center; gap: 0.75rem; }
+
+.student-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.student-name { font-weight: 600; color: #0f172a; font-size: 0.9rem; }
+body.dark-mode .student-name { color: #f1f5f9; }
+
+/* Percentage with mini bar */
+.percent-cell { display: flex; align-items: center; gap: 0.75rem; }
+
+.percent-value {
+    font-weight: 700;
+    font-size: 0.9rem;
+    min-width: 40px;
+}
+
+.percent-low    { color: #dc2626; }
+.percent-warning { color: #d97706; }
+.percent-safe   { color: #16a34a; }
+
+body.dark-mode .percent-low    { color: #f87171; }
+body.dark-mode .percent-warning { color: #fbbf24; }
+body.dark-mode .percent-safe   { color: #4ade80; }
+
+.mini-bar-track {
+    flex: 1;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 80px;
+}
+
+body.dark-mode .mini-bar-track { background: #334155; }
+
+.mini-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.6s ease;
+}
+
+.bar-low     { background: #ef4444; }
+.bar-warning { background: #f59e0b; }
+.bar-safe    { background: #22c55e; }
+
+/* Status Badges */
+.badge {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-short { background: #fee2e2; color: #991b1b; }
+body.dark-mode .badge-short { background: #7f1d1d; color: #fca5a5; }
+
+.badge-good  { background: #dcfce7; color: #166534; }
+body.dark-mode .badge-good { background: #14532d; color: #86efac; }
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5rem 2rem;
+    gap: 1rem;
+    text-align: center;
+}
+
+.empty-icon {
+    width: 72px;
+    height: 72px;
+    background: #f0fdf4;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+body.dark-mode .empty-icon { background: #14532d30; }
+
+.empty-state h3 { font-size: 1.1rem; font-weight: 600; color: #475569; }
+body.dark-mode .empty-state h3 { color: #94a3b8; }
+.empty-state p { font-size: 0.9rem; color: #94a3b8; }
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .filter-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .btn-apply { grid-column: 1 / -1; width: 100%; }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .filter-grid { grid-template-columns: 1fr; }
+    .summary-row { grid-template-columns: 1fr; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="{% url 'admin_dashboard' %}" class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📊</span>
+            <span>Global Attendance Report</span>
+        </h1>
+    </div>
+
+    <!-- Filter Panel -->
+    <div class="filter-panel">
+        <div class="filter-title">
+            <span>🔍</span>
+            <span>Filter Report</span>
+        </div>
+        <form method="get" id="filterForm">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label>Search</label>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        name="search"
+                        placeholder="Search student, subject, class..."
+                        value="{{ request.GET.search }}"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="filter-group">
+                    <label>Department</label>
+                    <select name="department" id="departmentFilter">
+                        <option value="">All Departments</option>
+                        {% for d in departments %}
+                        <option value="{{ d.0 }}" {% if request.GET.department == d.0|stringformat:"s" %}selected{% endif %}>{{ d.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Class</label>
+                    <select name="class" id="classFilter">
+                        <option value="">All Classes</option>
+                        {% for c in classes %}
+                        <option value="{{ c.0 }}" {% if request.GET.class == c.0|stringformat:"s" %}selected{% endif %}>{{ c.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Semester</label>
+                    <select name="semester" id="semesterFilter">
+                        <option value="">All Semesters</option>
+                        {% for s in semesters %}
+                        <option value="{{ s.0 }}" {% if request.GET.semester == s.0|stringformat:"s" %}selected{% endif %}>Semester {{ s.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Subject</label>
+                    <select name="subject" id="subjectFilter">
+                        <option value="">All Subjects</option>
+                        {% for s in subjects %}
+                        <option value="{{ s.0 }}" {% if request.GET.subject == s.0|stringformat:"s" %}selected{% endif %}>{{ s.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="">All</option>
+                        <option value="short"  {% if request.GET.status == 'short'  %}selected{% endif %}>Short</option>
+                        <option value="good"   {% if request.GET.status == 'good'   %}selected{% endif %}>Good</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-apply">Apply</button>
+            </div>
+
+            <!-- Active filter chips -->
+            {% if request.GET.department or request.GET.class or request.GET.semester or request.GET.subject or request.GET.status or request.GET.search %}
+            <div class="active-filters">
+                {% if request.GET.search %}<span class="filter-chip">Search: "{{ request.GET.search }}"</span>{% endif %}
+                {% if request.GET.status %}<span class="filter-chip">Status: {{ request.GET.status|capfirst }}</span>{% endif %}
+            </div>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if report %}
+
+    <!-- Summary Cards -->
+    <div class="summary-row">
+        <div class="summary-card">
+            <div class="summary-icon total">📋</div>
+            <div>
+                <div class="summary-num" id="totalCount">{{ report|length }}</div>
+                <div class="summary-label">Total Records</div>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-icon short">⚠️</div>
+            <div>
+                <div class="summary-num" id="shortCount">
+                    {{ report|length }}
+                </div>
+                <div class="summary-label">Short Attendance</div>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-icon good">✅</div>
+            <div>
+                <div class="summary-num" id="goodCount">0</div>
+                <div class="summary-label">Good Attendance</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+        <div class="table-wrapper">
+            <table id="attendanceTable">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student</th>
+                        <th>Class</th>
+                        <th>Subject</th>
+                        <th>Attendance %</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in report %}
+                    <tr data-row="{{ r.1|lower }} {{ r.2|lower }} {{ r.3|lower }}"
+                        data-percent="{{ r.4 }}"
+                        data-status="{% if r.4 < 75 %}short{% else %}good{% endif %}">
+                        <td style="color:#64748b; font-size:0.85rem;">{{ r.0 }}</td>
+                        <td>
+                            <div class="student-cell">
+                                <div class="student-avatar">{{ r.1|slice:":1"|upper }}</div>
+                                <div class="student-name">{{ r.1 }}</div>
+                            </div>
+                        </td>
+                        <td>{{ r.2 }}</td>
+                        <td>{{ r.3 }}</td>
+                        <td>
+                            <div class="percent-cell">
+                                <span class="percent-value {% if r.4 < 60 %}percent-low{% elif r.4 < 75 %}percent-warning{% else %}percent-safe{% endif %}">
+                                    {{ r.4 }}%
+                                </span>
+                                <div class="mini-bar-track">
+                                    <div class="mini-bar-fill {% if r.4 < 60 %}bar-low{% elif r.4 < 75 %}bar-warning{% else %}bar-safe{% endif %}"
+                                         style="width: {{ r.4 }}%">
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if r.4 < 75 %}
+                                <span class="badge badge-short">Short</span>
+                            {% else %}
+                                <span class="badge badge-good">Good</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- No results message -->
+        <div id="noResults" style="display:none; text-align:center; padding:3rem; color:#94a3b8;">
+            <div style="font-size:2rem; margin-bottom:0.75rem;">🔍</div>
+            <div style="font-weight:600; color:#64748b; margin-bottom:0.25rem;">No results match your search</div>
+            <div style="font-size:0.875rem;">Try a different keyword</div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="table-card">
+        <div class="empty-state">
+            <div class="empty-icon">🎉</div>
+            <h3>All Attendance is Good!</h3>
+            <p>No students are currently short on attendance.</p>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Live search
+const searchInput = document.getElementById('searchInput');
+const tbody = document.querySelector('#attendanceTable tbody');
+const noResults = document.getElementById('noResults');
+const totalCountEl = document.getElementById('totalCount');
+const shortCountEl = document.getElementById('shortCount');
+const goodCountEl  = document.getElementById('goodCount');
+
+function updateCounts() {
+    if (!tbody) return;
+    const rows = [...tbody.querySelectorAll('tr')].filter(r => r.style.display !== 'none');
+    const total = rows.length;
+    const shortRows = rows.filter(r => r.dataset.status === 'short').length;
+    const goodRows  = rows.filter(r => r.dataset.status === 'good').length;
+
+    if (totalCountEl) totalCountEl.textContent = total;
+    if (shortCountEl) shortCountEl.textContent = shortRows;
+    if (goodCountEl)  goodCountEl.textContent  = goodRows;
+    if (noResults) noResults.style.display = total === 0 ? 'block' : 'none';
+}
+
+if (searchInput && tbody) {
+    searchInput.addEventListener('input', function () {
+        const val = this.value.toLowerCase();
+        const rows = tbody.querySelectorAll('tr');
+        rows.forEach(row => {
+            const text = (row.dataset.row || '') + row.innerText.toLowerCase();
+            row.style.display = text.includes(val) ? '' : 'none';
+        });
+        updateCounts();
+    });
+}
+
+// Compute initial counts on page load
+window.addEventListener('DOMContentLoaded', updateCounts);
+
+// Cascading AJAX filters
+const departmentSelect = document.getElementById('departmentFilter');
+const classSelect      = document.getElementById('classFilter');
+const semesterSelect   = document.getElementById('semesterFilter');
+const subjectSelect    = document.getElementById('subjectFilter');
+
+// Read selected values from URL params (set after form submission)
+const urlParams     = new URLSearchParams(window.location.search);
+const savedDept     = urlParams.get('department') || '';
+const savedClass    = urlParams.get('class')      || '';
+const savedSemester = urlParams.get('semester')   || '';
+const savedSubject  = urlParams.get('subject')    || '';
+
+// Helper — fetch and populate a select, then set a saved value
+function loadOptions(url, select, labelFn, savedValue) {
+    return fetch(url)
+        .then(r => r.json())
+        .then(data => {
+            const items = data.classes || data.semesters || data.subjects || [];
+            items.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item[0];
+                opt.textContent = labelFn(item);
+                if (String(item[0]) === String(savedValue)) opt.selected = true;
+                select.appendChild(opt);
+            });
+        });
+}
+
+// On dept change → reload classes, clear semester+subject
+departmentSelect.addEventListener('change', function () {
+    const deptId = this.value;
+    classSelect.innerHTML    = '<option value="">All Classes</option>';
+    semesterSelect.innerHTML = '<option value="">All Semesters</option>';
+    subjectSelect.innerHTML  = '<option value="">All Subjects</option>';
+    if (!deptId) return;
+    loadOptions(`/ajax/get-classes/?department_id=${deptId}`, classSelect, c => c[1], '');
+});
+
+// On class change → reload semesters, clear subjects
+classSelect.addEventListener('change', function () {
+    const classId = this.value;
+    semesterSelect.innerHTML = '<option value="">All Semesters</option>';
+    subjectSelect.innerHTML  = '<option value="">All Subjects</option>';
+    if (!classId) return;
+    loadOptions(`/ajax/get-semesters-by-class/?class_id=${classId}`, semesterSelect, s => `Semester ${s[1]}`, '');
+});
+
+// On semester change → reload subjects
+semesterSelect.addEventListener('change', function () {
+    const semId = this.value;
+    subjectSelect.innerHTML = '<option value="">All Subjects</option>';
+    if (!semId) return;
+    loadOptions(`/ajax/get-subjects-by-semester/?semester_id=${semId}`, subjectSelect, s => s[1], '');
+});
+
+// ---- RE-HYDRATE on page load if filters were previously selected ----
+async function rehydrateFilters() {
+    if (!savedDept) return;
+
+    // Step 1: set department
+    departmentSelect.value = savedDept;
+
+    // Step 2: load classes for that dept, then select saved class
+    classSelect.innerHTML = '<option value="">All Classes</option>';
+    await loadOptions(
+        `/ajax/get-classes/?department_id=${savedDept}`,
+        classSelect,
+        c => c[1],
+        savedClass
+    );
+
+    if (!savedClass) return;
+
+    // Step 3: load semesters for that class, then select saved semester
+    semesterSelect.innerHTML = '<option value="">All Semesters</option>';
+    await loadOptions(
+        `/ajax/get-semesters-by-class/?class_id=${savedClass}`,
+        semesterSelect,
+        s => `Semester ${s[1]}`,
+        savedSemester
+    );
+
+    if (!savedSemester) return;
+
+    // Step 4: load subjects for that semester, then select saved subject
+    subjectSelect.innerHTML = '<option value="">All Subjects</option>';
+    await loadOptions(
+        `/ajax/get-subjects-by-semester/?semester_id=${savedSemester}`,
+        subjectSelect,
+        s => s[1],
+        savedSubject
+    );
+}
+
+rehydrateFilters();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+<h2>Delete Event</h2>
+
+<p>Are you sure you want to delete this event?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" style="color:red;">Yes, Delete</button>
+    <a href="{% url 'event_detail' event_id %}">Cancel</a>
+</form>

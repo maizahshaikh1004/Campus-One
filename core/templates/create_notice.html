@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Notice - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar {
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+}
+
+.nav-container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Page Header */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.page-header p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 0.4rem;
+}
+
+body.dark-mode .page-header p { color: #94a3b8; }
+
+/* Django messages */
+.message-toast {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    animation: slideDown 0.35s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.message-toast.success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+body.dark-mode .message-toast.success {
+    background: #14532d30;
+    border-color: #16a34a;
+    color: #86efac;
+}
+
+.message-toast.error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+body.dark-mode .message-toast.error {
+    background: #7f1d1d30;
+    border-color: #dc2626;
+    color: #fca5a5;
+}
+
+/* Card */
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+body.dark-mode .card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.875rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+body.dark-mode .card-title {
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+}
+
+/* Form Groups */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.form-group:last-child { margin-bottom: 0; }
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+body.dark-mode .form-group label { color: #94a3b8; }
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    padding: 0.7rem 0.875rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background: white;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group textarea,
+body.dark-mode .form-group select {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group textarea:focus,
+body.dark-mode .form-group select:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: #94a3b8; }
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 130px;
+    line-height: 1.6;
+}
+
+select option { background: white; color: #1e293b; }
+body.dark-mode select option { background: #334155; color: #f1f5f9; }
+
+/* Disabled select */
+.form-group select:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+body.dark-mode .form-group select:disabled {
+    background: #1e293b;
+    color: #64748b;
+}
+
+/* Scope selector — visual toggle buttons */
+.scope-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.scope-option {
+    position: relative;
+}
+
+.scope-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.scope-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f8fafc;
+    text-align: center;
+}
+
+body.dark-mode .scope-label {
+    border-color: #334155;
+    background: #0f172a;
+}
+
+.scope-label:hover {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+body.dark-mode .scope-label:hover {
+    border-color: #60a5fa;
+    background: #1e3a8a20;
+}
+
+.scope-option input[type="radio"]:checked + .scope-label {
+    border-color: #2563eb;
+    background: #eff6ff;
+    color: #1e40af;
+}
+
+body.dark-mode .scope-option input[type="radio"]:checked + .scope-label {
+    border-color: #60a5fa;
+    background: #1e3a8a30;
+    color: #bfdbfe;
+}
+
+.scope-icon { font-size: 1.5rem; }
+.scope-name { font-size: 0.875rem; font-weight: 600; color: #1e293b; }
+body.dark-mode .scope-name { color: #e2e8f0; }
+.scope-desc { font-size: 0.75rem; color: #64748b; }
+body.dark-mode .scope-desc { color: #94a3b8; }
+
+/* Scope target fields (dept + semester) */
+.scope-target {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.3s ease;
+    margin-top: 0;
+}
+
+.scope-target.visible {
+    max-height: 200px;
+    opacity: 1;
+    margin-top: 1.25rem;
+}
+
+/* File Upload */
+.file-upload-wrapper { position: relative; }
+
+.file-upload-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f8fafc;
+}
+
+body.dark-mode .file-upload-label {
+    border-color: #475569;
+    background: #0f172a;
+}
+
+.file-upload-label:hover { border-color: #2563eb; background: #eff6ff; }
+body.dark-mode .file-upload-label:hover { border-color: #60a5fa; background: #1e3a8a20; }
+
+.upload-icon { font-size: 1.4rem; }
+.upload-title { font-size: 0.875rem; font-weight: 500; color: #475569; }
+body.dark-mode .upload-title { color: #94a3b8; }
+.upload-hint { font-size: 0.775rem; color: #94a3b8; margin-top: 0.15rem; }
+
+.file-upload-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+/* Submit footer */
+.form-footer {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.btn-submit {
+    flex: 1;
+    padding: 0.875rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-submit:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+body.dark-mode .btn-submit { background: #60a5fa; color: #0f172a; }
+body.dark-mode .btn-submit:hover { background: #3b82f6; }
+
+.btn-cancel {
+    padding: 0.875rem 1.5rem;
+    background: #f1f5f9;
+    color: #475569;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-cancel:hover { background: #e2e8f0; }
+body.dark-mode .btn-cancel { background: #334155; color: #94a3b8; }
+body.dark-mode .btn-cancel:hover { background: #475569; }
+
+/* Responsive */
+@media (max-width: 600px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .scope-selector { grid-template-columns: 1fr 1fr; }
+    .scope-target { grid-template-columns: 1fr; }
+    .form-footer { flex-direction: column; }
+    .btn-cancel { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="
+        {% if request.session.role == 'ADMIN' %}{% url 'admin_dashboard' %}
+        {% elif request.session.role == 'FACULTY' %}{% url 'faculty_dashboard' %}
+        {% else %}{% url 'student_dashboard' %}{% endif %}
+        " class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📢</span>
+            <span>Create Notice</span>
+        </h1>
+        <p>Post an announcement to your students or faculty</p>
+    </div>
+
+    <!-- Django Messages -->
+    {% if messages %}
+        {% for message in messages %}
+        <div class="message-toast {{ message.tags }}">
+            {% if message.tags == 'success' %}✅{% else %}❌{% endif %}
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Notice Content -->
+        <div class="card">
+            <div class="card-title">
+                <span>✏️</span>
+                <span>Notice Content</span>
+            </div>
+
+            <div class="form-group">
+                <label for="title">Title *</label>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Enter notice title..."
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="content">Content *</label>
+                <textarea
+                    id="content"
+                    name="content"
+                    placeholder="Write your notice here..."
+                    required
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Attachment <span style="color:#94a3b8; font-weight:400;">(optional)</span></label>
+                <div class="file-upload-wrapper">
+                    <div class="file-upload-label">
+                        <span class="upload-icon">📎</span>
+                        <div>
+                            <div class="upload-title" id="uploadTitle">Click to attach a file</div>
+                            <div class="upload-hint">PDF, DOC, PNG, JPG — max 10MB</div>
+                        </div>
+                    </div>
+                    <input
+                        type="file"
+                        name="attachment"
+                        class="file-upload-input"
+                        id="attachmentInput"
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- Audience / Scope -->
+        <div class="card">
+            <div class="card-title">
+                <span>🎯</span>
+                <span>Target Audience</span>
+            </div>
+
+            <!-- Scope Toggle -->
+            <div class="form-group">
+                <label>Scope *</label>
+                <div class="scope-selector">
+                    <div class="scope-option">
+                        <input type="radio" name="scope" id="scope_global" value="GLOBAL" checked onchange="handleScopeChange()">
+                        <label class="scope-label" for="scope_global">
+                            <span class="scope-icon">🌐</span>
+                            <span class="scope-name">Global</span>
+                            <span class="scope-desc">Everyone sees this</span>
+                        </label>
+                    </div>
+                    <div class="scope-option">
+                        <input type="radio" name="scope" id="scope_dept" value="DEPARTMENT" onchange="handleScopeChange()">
+                        <label class="scope-label" for="scope_dept">
+                            <span class="scope-icon">🏢</span>
+                            <span class="scope-name">Department</span>
+                            <span class="scope-desc">Specific dept / semester</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Department + Semester (shown only when Dept selected) -->
+            <div class="scope-target" id="scopeTarget">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="department_id">Department</label>
+                    <select name="department_id" id="department">
+                        <option value="">— Select Department —</option>
+                        {% for d in departments %}
+                        <option value="{{ d.0 }}">{{ d.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="semester_id">Semester <span style="color:#94a3b8; font-weight:400;">(optional)</span></label>
+                    <select name="semester_id" id="semester" disabled>
+                        <option value="">— Select Department first —</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="form-footer">
+            <a href="javascript:history.back()" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-submit">
+                <span>📢</span>
+                <span>Post Notice</span>
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Scope toggle — show/hide dept+semester fields
+function handleScopeChange() {
+    const isDept   = document.getElementById('scope_dept').checked;
+    const target   = document.getElementById('scopeTarget');
+    const deptSel  = document.getElementById('department');
+    const semSel   = document.getElementById('semester');
+
+    if (isDept) {
+        target.classList.add('visible');
+    } else {
+        target.classList.remove('visible');
+        deptSel.value = '';
+        semSel.innerHTML = '<option value="">— Select Department first —</option>';
+        semSel.disabled = true;
+    }
+}
+
+// Department → Semester AJAX
+document.getElementById('department').addEventListener('change', function () {
+    const deptId = this.value;
+    const semSelect = document.getElementById('semester');
+
+    if (!deptId) {
+        semSelect.innerHTML = '<option value="">— Select Department first —</option>';
+        semSelect.disabled = true;
+        return;
+    }
+
+    semSelect.innerHTML = '<option value="">Loading...</option>';
+    semSelect.disabled = true;
+
+    fetch(`/ajax/get-semesters/?department_id=${deptId}`)
+        .then(r => r.json())
+        .then(data => {
+            semSelect.innerHTML = '<option value="">— All Semesters —</option>';
+            data.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.id;
+                opt.textContent = `Semester ${s.number}`;
+                semSelect.appendChild(opt);
+            });
+            semSelect.disabled = false;
+        })
+        .catch(() => {
+            semSelect.innerHTML = '<option value="">Error loading semesters</option>';
+        });
+});
+
+// File label update
+document.getElementById('attachmentInput').addEventListener('change', function () {
+    const name = this.files[0]?.name;
+    if (name) document.getElementById('uploadTitle').textContent = name;
+});
+</script>
+
+</body>
+</html>

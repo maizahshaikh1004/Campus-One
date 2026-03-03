@@ -1,0 +1,649 @@
+
+Procedures:
+
+acknowledge_sos_alert
+CREATE DEFINER=`root`@`localhost` PROCEDURE `acknowledge_sos_alert`(
+     IN p_alert_id INT
+ )
+ BEGIN
+     UPDATE sos_alerts
+     SET status = 'ACKNOWLEDGED'
+     WHERE alert_id = p_alert_id;
+ END
+
+
+approve_attendance_correction
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `approve_attendance_correction`(
+     IN p_request_id INT,
+     IN p_admin_id INT
+ )
+ BEGIN
+     DECLARE v_attendance_id INT;
+     DECLARE v_new_status BOOLEAN;
+ 
+     -- Ensure admin
+     IF NOT EXISTS (
+         SELECT 1 FROM users
+         WHERE user_id = p_admin_id AND role = 'ADMIN'
+     ) THEN
+         SIGNAL SQLSTATE '45000'
+         SET MESSAGE_TEXT = 'Only admin can approve corrections';
+     END IF;
+ 
+     -- Fetch request details
+     SELECT attendance_id, requested_status
+     INTO v_attendance_id, v_new_status
+     FROM attendance_correction_requests
+     WHERE request_id = p_request_id
+       AND status = 'PENDING';
+ 
+     IF v_attendance_id IS NULL THEN
+         SIGNAL SQLSTATE '45000'
+         SET MESSAGE_TEXT = 'Invalid or already processed request';
+     END IF;
+ 
+     -- ✅ ALLOW UPDATE (MATCHES TRIGGER)
+     SET @allow_attendance_update := TRUE;
+ 
+     UPDATE attendance
+     SET status = v_new_status
+     WHERE attendance_id = v_attendance_id;
+ 
+     SET @allow_attendance_update := NULL;
+ 
+     -- Mark request approved
+     UPDATE attendance_correction_requests
+     SET status = 'APPROVED'
+     WHERE request_id = p_request_id;
+ 
+ END
+
+approve_registration_request
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `approve_registration_request`(
+     IN p_request_id INT
+ )
+ BEGIN
+     DECLARE v_name VARCHAR(100);
+     DECLARE v_email VARCHAR(100);
+     DECLARE v_role ENUM('FACULTY','STUDENT');
+     DECLARE v_department VARCHAR(50);
+ 
+     SELECT name, email, role, department
+     INTO v_name, v_email, v_role, v_department
+     FROM registration_requests
+     WHERE request_id = p_request_id AND status = 'PENDING';
+ 
+     INSERT INTO users (name, email, role, department, is_active)
+     VALUES (v_name, v_email, v_role, v_department, TRUE);
+ 
+     UPDATE registration_requests
+     SET status = 'APPROVED'
+     WHERE request_id = p_request_id;
+ END
+
+assign_student_coordinator
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `assign_student_coordinator`(
+     IN p_event_id INT,
+     IN p_student_id INT
+ )
+ BEGIN
+     -- Limit to max 2 coordinators per event
+     IF (SELECT COUNT(*) FROM event_coordinators WHERE event_id = p_event_id) >= 2 THEN
+         SIGNAL SQLSTATE '45000'
+         SET MESSAGE_TEXT = 'Maximum 2 coordinators allowed per event';
+     ELSE
+         INSERT INTO event_coordinators (event_id, student_id)
+         VALUES (p_event_id, p_student_id);
+     END IF;
+ END
+
+create_assignment
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_assignment`(
+     IN p_subject_id INT,
+     IN p_title VARCHAR(200),
+     IN p_description TEXT,
+     IN p_due_date DATE,
+     IN p_created_by INT
+ )
+ BEGIN
+     INSERT INTO assignments
+     (subject_id, title, description, due_date, created_by)
+     VALUES
+     (p_subject_id, p_title, p_description, p_due_date, p_created_by);
+ END
+
+create_event
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_event`(
+     IN p_title VARCHAR(150),
+     IN p_description TEXT,
+     IN p_venue VARCHAR(100),
+     IN p_event_datetime DATETIME,
+     IN p_department VARCHAR(50),
+     IN p_google_form_link TEXT,
+     IN p_created_by INT
+ )
+ BEGIN
+     INSERT INTO events
+     (title, description, venue, event_datetime, department, google_form_link, created_by, is_active)
+     VALUES
+     (p_title, p_description, p_venue, p_event_datetime,
+      p_department, p_google_form_link, p_created_by, TRUE);
+ END
+
+deactivate_user
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deactivate_user`(
+     IN p_user_id INT
+ )
+ BEGIN
+     UPDATE users
+     SET is_active = FALSE
+     WHERE user_id = p_user_id;
+ END
+
+delete_notice
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_notice`(
+     IN p_notice_id INT
+ )
+ BEGIN
+     DELETE FROM notices
+     WHERE notice_id = p_notice_id;
+ END
+
+disable_expired_events
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `disable_expired_events`()
+ BEGIN
+     UPDATE events
+     SET is_active = FALSE
+     WHERE event_datetime < CURRENT_TIMESTAMP;
+ END
+
+get_assignment_submissions
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_assignment_submissions`(
+     IN p_assignment_id INT
+ )
+ BEGIN
+     SELECT
+         student_id,
+         submitted_at,
+         is_late,
+         file_path
+     FROM assignment_submissions
+     WHERE assignment_id = p_assignment_id;
+ END
+
+get_assignment_summary
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_assignment_summary`()
+ BEGIN
+     SELECT
+         COUNT(DISTINCT assignment_id) AS total_assignments,
+         COUNT(submission_id) AS total_submissions,
+         SUM(is_late) AS late_submissions
+     FROM assignment_submissions;
+ END
+
+get_attendance_overview
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_attendance_overview`()
+ BEGIN
+     SELECT
+         u.department,
+         COUNT(a.attendance_id) AS total_lectures
+     FROM attendance a
+     JOIN users u ON a.student_id = u.user_id
+     GROUP BY u.department;
+ END
+
+get_events_by_department
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_events_by_department`(
+     IN p_department VARCHAR(50)
+ )
+ BEGIN
+     SELECT
+         event_id,
+         title,
+         description,
+         venue,
+         event_datetime,
+         google_form_link
+     FROM events
+     WHERE (department = p_department OR department = 'ALL')
+       AND is_active = TRUE
+     ORDER BY event_datetime;
+ END
+
+
+get_event_summary
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_event_summary`()
+ BEGIN
+     SELECT
+         department,
+         COUNT(*) AS total_events,
+         SUM(is_active) AS active_events
+     FROM events
+     GROUP BY department;
+ END
+
+get_low_attendance_students
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_low_attendance_students`()
+ BEGIN
+     SELECT
+         student_id,
+         subject_id,
+         calculate_attendance_percentage(student_id, subject_id) AS attendance_percentage
+     FROM attendance
+     GROUP BY student_id, subject_id
+     HAVING attendance_percentage < 75;
+ END
+
+get_notices_for_student
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_notices_for_student`(
+     IN p_department VARCHAR(50)
+ )
+ BEGIN
+     SELECT
+         title,
+         content,
+         posted_at
+     FROM notices
+     WHERE department = p_department
+        OR department = 'ALL'
+        OR department IS NULL
+     ORDER BY posted_at DESC;
+ END
+
+
+get_pending_registration_requests
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_pending_registration_requests`()
+ BEGIN
+     SELECT
+         request_id,
+         name,
+         email,
+         role,
+         department,
+         requested_at
+     FROM registration_requests
+     WHERE status = 'PENDING';
+ END
+
+get_sos_alerts
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_sos_alerts`()
+ BEGIN
+     SELECT
+         alert_id,
+         user_id,
+         message,
+         latitude,
+         longitude,
+         status,
+         triggered_at
+     FROM sos_alerts
+     ORDER BY triggered_at DESC;
+ END
+
+get_student_attendance
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_student_attendance`(
+     IN p_student_id INT,
+     IN p_subject_id INT
+ )
+ BEGIN
+     SELECT date, time_slot, status
+     FROM attendance
+     WHERE student_id = p_student_id
+       AND subject_id = p_subject_id
+     ORDER BY date, time_slot;
+ END
+
+get_user_statistics
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_user_statistics`()
+ BEGIN
+     SELECT
+         role,
+         COUNT(*) AS total_users
+     FROM users
+     GROUP BY role;
+ END
+
+mark_attendance
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `mark_attendance`(
+     IN p_student_id INT,
+     IN p_subject_id INT,
+     IN p_class_id INT,
+     IN p_date DATE,
+     IN p_time_slot VARCHAR(20),
+     IN p_status BOOLEAN,
+     IN p_faculty_id INT
+ )
+ BEGIN
+     INSERT INTO attendance
+     (student_id, subject_id, class_id, date, time_slot, status, faculty_id)
+     VALUES
+     (p_student_id, p_subject_id, p_class_id, p_date, p_time_slot, p_status, p_faculty_id);
+ END
+
+
+post_notice
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `post_notice`(
+     IN p_title VARCHAR(200),
+     IN p_content TEXT,
+     IN p_department VARCHAR(50),
+     IN p_posted_by INT
+ )
+ BEGIN
+     INSERT INTO notices
+     (title, content, department, posted_by)
+     VALUES
+     (p_title, p_content, p_department, p_posted_by);
+ END
+
+reject_registration_request
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `reject_registration_request`(
+     IN p_request_id INT
+ )
+ BEGIN
+     UPDATE registration_requests
+     SET status = 'REJECTED'
+     WHERE request_id = p_request_id;
+ END
+
+request_attendance_correction
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `request_attendance_correction`(
+     IN p_attendance_id INT,
+     IN p_requested_status BOOLEAN,
+     IN p_reason TEXT,
+     IN p_faculty_id INT
+ )
+ BEGIN
+     INSERT INTO attendance_correction_requests (
+         attendance_id,
+         faculty_id,
+         requested_status,
+         reason,
+         status
+     )
+     VALUES (
+         p_attendance_id,
+         p_faculty_id,
+         p_requested_status,
+         p_reason,
+         'PENDING'
+     );
+ END
+
+resolve_sos_alert
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `resolve_sos_alert`(
+     IN p_alert_id INT
+ )
+ BEGIN
+     UPDATE sos_alerts
+     SET status = 'RESOLVED'
+     WHERE alert_id = p_alert_id;
+ END
+
+submit_assignment
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `submit_assignment`(
+     IN p_assignment_id INT,
+     IN p_student_id INT,
+     IN p_file_path VARCHAR(255)
+ )
+ BEGIN
+     DECLARE v_due_date DATE;
+     DECLARE v_is_late BOOLEAN;
+ 
+     -- Fetch due date
+     SELECT due_date INTO v_due_date
+     FROM assignments
+     WHERE assignment_id = p_assignment_id;
+ 
+     -- Determine late submission
+     IF CURRENT_DATE > v_due_date THEN
+         SET v_is_late = TRUE;
+     ELSE
+         SET v_is_late = FALSE;
+     END IF;
+ 
+     INSERT INTO assignment_submissions
+     (assignment_id, student_id, file_path, submitted_at, is_late)
+     VALUES
+     (p_assignment_id, p_student_id, p_file_path, CURRENT_TIMESTAMP, v_is_late);
+ END
+
+submit_registration_request
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `submit_registration_request`(
+     IN p_name VARCHAR(100),
+     IN p_email VARCHAR(100),
+     IN p_role ENUM('FACULTY','STUDENT'),
+     IN p_department VARCHAR(50)
+ )
+ BEGIN
+     -- Prevent duplicate users
+     IF EXISTS (SELECT 1 FROM users WHERE email = p_email) THEN
+         SIGNAL SQLSTATE '45000'
+         SET MESSAGE_TEXT = 'User already exists';
+     ELSE
+         INSERT INTO registration_requests
+         (name, email, role, department, status)
+         VALUES
+         (p_name, p_email, p_role, p_department, 'PENDING');
+     END IF;
+ END
+
+trigger_sos_alert
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `trigger_sos_alert`(
+     IN p_user_id INT,
+     IN p_latitude DECIMAL(10,6),
+     IN p_longitude DECIMAL(10,6)
+ )
+ BEGIN
+     DECLARE v_message TEXT;
+ 
+     -- Predefined emergency message
+     SET v_message = 'This is an emergency alert. I need immediate help.';
+ 
+     INSERT INTO sos_alerts
+     (user_id, message, latitude, longitude)
+     VALUES
+     (p_user_id, v_message, p_latitude, p_longitude);
+ END
+
+
+
+Functions:
+
+calculate_attendance_percentage
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `calculate_attendance_percentage`(
+     p_student_id INT,
+     p_subject_id INT
+ ) RETURNS decimal(5,2)
+     DETERMINISTIC
+ BEGIN
+     DECLARE total INT;
+     DECLARE present INT;
+ 
+     SELECT COUNT(*) INTO total
+     FROM attendance
+     WHERE student_id = p_student_id
+       AND subject_id = p_subject_id;
+ 
+     SELECT COUNT(*) INTO present
+     FROM attendance
+     WHERE student_id = p_student_id
+       AND subject_id = p_subject_id
+       AND status = TRUE;
+ 
+     IF total = 0 THEN
+         RETURN 0;
+     END IF;
+ 
+     RETURN (present / total) * 100;
+ END
+
+
+check_attendance_shortage
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `check_attendance_shortage`(
+     p_student_id INT,
+     p_subject_id INT
+ ) RETURNS tinyint(1)
+     DETERMINISTIC
+ BEGIN
+     DECLARE percentage DECIMAL(5,2);
+ 
+     SET percentage = calculate_attendance_percentage(p_student_id, p_subject_id);
+ 
+     IF percentage < 75 THEN
+         RETURN TRUE;
+     ELSE
+         RETURN FALSE;
+     END IF;
+ END
+
+get_emergency_contacts
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_emergency_contacts`(
+     p_user_id INT
+ ) RETURNS text CHARSET utf8mb4
+     DETERMINISTIC
+ BEGIN
+     DECLARE contacts TEXT;
+ 
+     SELECT GROUP_CONCAT(
+         CONCAT(contact_name, ': ', contact_phone)
+         SEPARATOR ', '
+     )
+     INTO contacts
+     FROM emergency_contacts
+     WHERE user_id = p_user_id;
+ 
+     RETURN contacts;
+ END
+
+
+get_event_registration_link
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_event_registration_link`(
+     p_event_id INT
+ ) RETURNS text CHARSET utf8mb4
+     DETERMINISTIC
+ BEGIN
+     DECLARE v_link TEXT;
+ 
+     SELECT google_form_link INTO v_link
+     FROM events
+     WHERE event_id = p_event_id;
+ 
+     RETURN v_link;
+ END
+
+
+get_system_snapshot
+
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_system_snapshot`() RETURNS text CHARSET utf8mb4
+     DETERMINISTIC
+ BEGIN
+     DECLARE summary TEXT;
+ 
+     SET summary = CONCAT(
+         'Users: ', (SELECT COUNT(*) FROM users),
+         ', Events: ', (SELECT COUNT(*) FROM events),
+         ', SOS Alerts: ', (SELECT COUNT(*) FROM sos_alerts)
+     );
+ 
+     RETURN summary;
+ END
+
+get_user_role
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_user_role`(p_user_id INT) RETURNS varchar(20) CHARSET utf8mb4
+     DETERMINISTIC
+ BEGIN
+     DECLARE v_role VARCHAR(20);
+ 
+     SELECT role INTO v_role
+     FROM users
+     WHERE user_id = p_user_id;
+ 
+     RETURN v_role;
+ END
+
+
+is_late_submission
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `is_late_submission`(
+     p_assignment_id INT,
+     p_submission_time TIMESTAMP
+ ) RETURNS tinyint(1)
+     DETERMINISTIC
+ BEGIN
+     DECLARE v_due_date DATE;
+ 
+     SELECT due_date INTO v_due_date
+     FROM assignments
+     WHERE assignment_id = p_assignment_id;
+ 
+     IF DATE(p_submission_time) > v_due_date THEN
+         RETURN TRUE;
+     ELSE
+         RETURN FALSE;
+     END IF;
+ END
+
+
+is_notice_visible
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `is_notice_visible`(
+     p_user_dept VARCHAR(50),
+     p_notice_dept VARCHAR(50)
+ ) RETURNS tinyint(1)
+     DETERMINISTIC
+ BEGIN
+     IF p_notice_dept = 'ALL'
+        OR p_notice_dept IS NULL
+        OR p_notice_dept = p_user_dept THEN
+         RETURN TRUE;
+     ELSE
+         RETURN FALSE;
+     END IF;
+ END
+
+
+is_user_active
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `is_user_active`(p_email VARCHAR(100)) RETURNS tinyint(1)
+     DETERMINISTIC
+ BEGIN
+     DECLARE v_status BOOLEAN;
+ 
+     SELECT is_active INTO v_status
+     FROM users
+     WHERE email = p_email;
+ 
+     RETURN v_status;
+ END

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Assignment - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+
+/* Page Header */
+.page-header { margin-bottom: 2rem; }
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.page-header p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 0.4rem;
+}
+
+body.dark-mode .page-header p { color: #94a3b8; }
+
+/* Error Message */
+.error-banner {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .error-banner {
+    background: #7f1d1d30;
+    border-color: #991b1b;
+}
+
+.error-icon {
+    width: 32px;
+    height: 32px;
+    background: #fee2e2;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .error-icon { background: #7f1d1d; }
+
+.error-text {
+    font-size: 0.875rem;
+    color: #991b1b;
+    font-weight: 500;
+}
+
+body.dark-mode .error-text { color: #fca5a5; }
+
+/* Card */
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Form Group */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+body.dark-mode .form-group label { color: #94a3b8; }
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+    padding: 0.7rem 0.875rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background: white;
+    transition: all 0.2s;
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group select:focus,
+body.dark-mode .form-group textarea:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+}
+
+select option { background: white; color: #1e293b; }
+body.dark-mode select option { background: #334155; color: #f1f5f9; }
+
+/* File Input */
+.file-input-wrapper {
+    position: relative;
+}
+
+.file-input-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2.5rem 1.5rem;
+    border: 2px dashed #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+body.dark-mode .file-input-label {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+.file-input-label:hover {
+    border-color: #2563eb;
+    background: #f0f9ff;
+}
+
+body.dark-mode .file-input-label:hover {
+    border-color: #60a5fa;
+    background: #1e3a8a30;
+}
+
+.file-input-label.has-file {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+body.dark-mode .file-input-label.has-file {
+    border-color: #60a5fa;
+    background: #1e3a8a30;
+}
+
+.file-icon {
+    font-size: 2rem;
+}
+
+.file-text {
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+body.dark-mode .file-text { color: #94a3b8; }
+
+.file-name {
+    font-weight: 600;
+    color: #2563eb;
+    margin-top: 0.5rem;
+}
+
+body.dark-mode .file-name { color: #60a5fa; }
+
+input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.file-hint {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.5rem;
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 0.875rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.btn-submit:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+body.dark-mode .btn-submit { background: #60a5fa; color: #0f172a; }
+body.dark-mode .btn-submit:hover { background: #3b82f6; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="{% url 'faculty_dashboard' %}" class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📝</span>
+            <span>Create Assignment</span>
+        </h1>
+        <p>Create a new assignment for your students</p>
+    </div>
+
+    <!-- Error Message -->
+    {% if message %}
+    <div class="error-banner">
+        <div class="error-icon">⚠️</div>
+        <div class="error-text">{{ message }}</div>
+    </div>
+    {% endif %}
+
+    <!-- Form Card -->
+    <div class="card">
+        <form method="post" enctype="multipart/form-data" id="assignmentForm">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="subject_id">Subject *</label>
+                <select name="subject_id" id="subject_id" required>
+                    <option value="">— Choose a subject —</option>
+                    {% for sub in subjects %}
+                        <option value="{{ sub.0 }}">
+                            {{ sub.1 }} (Semester {{ sub.2 }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <input type="hidden" name="semester_id" value="{{ subjects.0.2 }}">
+
+            <div class="form-group">
+                <label for="title">Assignment Title *</label>
+                <input
+                    type="text"
+                    name="title"
+                    id="title"
+                    placeholder="e.g., Mid-Term Assignment on Data Structures"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea
+                    name="description"
+                    id="description"
+                    placeholder="Provide detailed instructions for the assignment"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="question_file">Assignment Question File *</label>
+                <div class="file-input-wrapper">
+                    <label for="question_file" class="file-input-label" id="fileLabel">
+                        <div>
+                            <div class="file-icon">📄</div>
+                            <div class="file-text">Click to upload or drag and drop</div>
+                            <div class="file-name" id="fileName" style="display:none;"></div>
+                        </div>
+                    </label>
+                    <input
+                        type="file"
+                        name="question_file"
+                        id="question_file"
+                        accept=".pdf,.doc,.docx"
+                        required
+                    >
+                </div>
+                <div class="file-hint">Accepted formats: PDF, DOC, DOCX (max 10MB)</div>
+            </div>
+
+            <div class="form-group">
+                <label for="due_date">Due Date *</label>
+                <input
+                    type="date"
+                    name="due_date"
+                    id="due_date"
+                    min="{{ today }}"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <span>🚀</span>
+                <span>Create Assignment</span>
+            </button>
+
+        </form>
+    </div>
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// File upload
+const fileInput = document.getElementById('question_file');
+const fileLabel = document.getElementById('fileLabel');
+const fileName  = document.getElementById('fileName');
+
+fileInput.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+        const file = this.files[0];
+        fileName.textContent = `📎 ${file.name}`;
+        fileName.style.display = 'block';
+        fileLabel.classList.add('has-file');
+    } else {
+        fileName.style.display = 'none';
+        fileLabel.classList.remove('has-file');
+    }
+});
+
+// Due date validation
+const dueDateInput = document.getElementById('due_date');
+dueDateInput.addEventListener('change', function() {
+    const today = new Date().toISOString().split('T')[0];
+    if (this.value < today) {
+        alert('Due date cannot be in the past');
+        this.value = '';
+    }
+});
+</script>
+
+</body>
+</html>

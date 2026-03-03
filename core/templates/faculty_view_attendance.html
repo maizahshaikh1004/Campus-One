@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marked Attendances - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 1300px; margin: 0 auto; padding: 2rem; }
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.count-badge {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+body.dark-mode .count-badge { background: #1e3a8a; color: #bfdbfe; }
+
+/* Filter Panel */
+.filter-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+body.dark-mode .filter-panel { background: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+.search-box {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.65rem 0.875rem 0.65rem 2.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background: white;
+    transition: all 0.2s;
+}
+
+body.dark-mode .search-box input {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.filter-select {
+    min-width: 150px;
+}
+
+.filter-select select,
+.filter-select input[type="date"] {
+    width: 100%;
+    padding: 0.65rem 0.875rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background: white;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+body.dark-mode .filter-select select,
+body.dark-mode .filter-select input {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+select option { background: white; color: #1e293b; }
+body.dark-mode select option { background: #334155; color: #f1f5f9; }
+
+/* Table Card */
+.table-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .table-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+body.dark-mode thead {
+    background: #0f172a;
+    border-bottom-color: #334155;
+}
+
+th {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+body.dark-mode th { color: #94a3b8; }
+
+tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.15s;
+}
+
+body.dark-mode tbody tr { border-bottom-color: #334155; }
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+body.dark-mode tbody tr:hover { background: #334155; }
+
+tbody tr:last-child { border-bottom: none; }
+
+td {
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    color: #1e293b;
+}
+
+body.dark-mode td { color: #e2e8f0; }
+
+/* Student Name with Avatar */
+.student-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.student-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.student-name {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+body.dark-mode .student-name { color: #f1f5f9; }
+
+/* Status Badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-present { background: #dcfce7; color: #166534; }
+body.dark-mode .badge-present { background: #14532d; color: #86efac; }
+
+.badge-absent { background: #fee2e2; color: #991b1b; }
+body.dark-mode .badge-absent { background: #7f1d1d; color: #fca5a5; }
+
+/* Time Cell */
+.time-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+body.dark-mode .time-cell { color: #94a3b8; }
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-text {
+    color: #94a3b8;
+    font-size: 0.95rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .table-wrapper {
+        overflow-x: scroll;
+    }
+    
+    table {
+        min-width: 800px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .filter-panel { flex-direction: column; }
+    .search-box { min-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="{% url 'faculty_dashboard' %}" class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📋</span>
+            <span>Marked Attendances</span>
+        </h1>
+        <div class="count-badge" id="countBadge">{{ records|length }} Records</div>
+    </div>
+
+    <!-- Filter Panel -->
+    <div class="filter-panel">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search student or subject..."
+                autocomplete="off"
+            >
+        </div>
+        <div class="filter-select">
+            <input type="date" id="dateFilter">
+        </div>
+        <div class="filter-select">
+            <select id="statusFilter">
+                <option value="all">All Status</option>
+                <option value="present">✓ Present</option>
+                <option value="absent">✕ Absent</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Subject</th>
+                        <th>Date</th>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceTable">
+                    {% for student, subject, lecture_date, day, start, end, status in records %}
+                    <tr
+                        data-student="{{ student|lower }}"
+                        data-subject="{{ subject|lower }}"
+                        data-date="{{ lecture_date|date:'Y-m-d' }}"
+                        data-status="{% if status %}present{% else %}absent{% endif %}"
+                    >
+                        <td>
+                            <div class="student-cell">
+                                <div class="student-avatar">{{ student|slice:":1"|upper }}</div>
+                                <div class="student-name">{{ student }}</div>
+                            </div>
+                        </td>
+                        <td>{{ subject }}</td>
+                        <td>{{ lecture_date }}</td>
+                        <td>{{ day }}</td>
+                        <td>
+                            <div class="time-cell">
+                                <span>⏰</span>
+                                <span>{{ start }} - {{ end }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            {% if status %}
+                                <span class="status-badge badge-present">
+                                    <span>✓</span>
+                                    <span>Present</span>
+                                </span>
+                            {% else %}
+                                <span class="status-badge badge-absent">
+                                    <span>✕</span>
+                                    <span>Absent</span>
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-icon">📭</div>
+                                <div class="empty-text">No attendance records found</div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Filters
+const searchInput = document.getElementById('searchInput');
+const dateFilter = document.getElementById('dateFilter');
+const statusFilter = document.getElementById('statusFilter');
+const rows = document.querySelectorAll('#attendanceTable tr[data-student]');
+const countBadge = document.getElementById('countBadge');
+const totalRecords = rows.length;
+
+function filterTable() {
+    const search = searchInput.value.toLowerCase();
+    const selectedDate = dateFilter.value;
+    const selectedStatus = statusFilter.value;
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const student = row.dataset.student;
+        const subject = row.dataset.subject;
+        const date = row.dataset.date;
+        const status = row.dataset.status;
+
+        const matchSearch = student.includes(search) || subject.includes(search);
+        const matchDate = !selectedDate || date === selectedDate;
+        const matchStatus = selectedStatus === 'all' || status === selectedStatus;
+
+        const isVisible = matchSearch && matchDate && matchStatus;
+        row.style.display = isVisible ? '' : 'none';
+        if (isVisible) visibleCount++;
+    });
+
+    // Update count badge
+    if (countBadge) {
+        if (visibleCount === totalRecords) {
+            countBadge.textContent = `${totalRecords} Records`;
+        } else {
+            countBadge.textContent = `${visibleCount} of ${totalRecords} Records`;
+        }
+    }
+}
+
+searchInput.addEventListener('input', filterTable);
+dateFilter.addEventListener('change', filterTable);
+statusFilter.addEventListener('change', filterTable);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ notice.1 }} - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Notice Hero Card */
+.notice-hero {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+body.dark-mode .notice-hero { background: #1e293b; }
+
+.notice-banner {
+    height: 8px;
+    background: linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%);
+}
+
+.notice-banner.dept   { background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); }
+.notice-banner.sem    { background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); }
+
+.notice-hero-body {
+    padding: 2rem;
+}
+
+.notice-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+    margin-bottom: 1.25rem;
+}
+
+body.dark-mode .notice-title { color: #f1f5f9; }
+
+/* Scope + meta row */
+.notice-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 1.75rem;
+}
+
+body.dark-mode .notice-meta-row { border-bottom-color: #334155; }
+
+/* Scope Badge */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.875rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-global { background: #dcfce7; color: #166534; }
+body.dark-mode .badge-global { background: #14532d; color: #86efac; }
+
+.badge-dept { background: #fef3c7; color: #92400e; }
+body.dark-mode .badge-dept { background: #78350f; color: #fde68a; }
+
+.badge-sem { background: #ede9fe; color: #5b21b6; }
+body.dark-mode .badge-sem { background: #4c1d95; color: #ddd6fe; }
+
+/* Meta info */
+.meta-divider {
+    width: 4px;
+    height: 4px;
+    background: #cbd5e1;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+body.dark-mode .meta-divider { background: #475569; }
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+body.dark-mode .meta-item { color: #94a3b8; }
+
+.meta-item strong {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+body.dark-mode .meta-item strong { color: #e2e8f0; }
+
+/* Notice Content */
+.notice-content {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: #334155;
+    white-space: pre-wrap;
+}
+
+body.dark-mode .notice-content { color: #cbd5e1; }
+
+/* Attachment Card */
+.attachment-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+body.dark-mode .attachment-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.attachment-icon {
+    width: 48px;
+    height: 48px;
+    background: #dbeafe;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+body.dark-mode .attachment-icon { background: #1e3a8a; }
+
+.attachment-info { flex: 1; }
+
+.attachment-label {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 0.2rem;
+}
+
+body.dark-mode .attachment-label { color: #94a3b8; }
+
+.attachment-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+body.dark-mode .attachment-name { color: #e2e8f0; }
+
+.btn-download {
+    padding: 0.6rem 1.25rem;
+    background: #2563eb;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-download:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+body.dark-mode .btn-download { background: #60a5fa; color: #0f172a; }
+body.dark-mode .btn-download:hover { background: #3b82f6; }
+
+/* Responsive */
+@media (max-width: 600px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .notice-hero-body { padding: 1.5rem; }
+    .notice-title { font-size: 1.4rem; }
+    .notice-meta-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    .meta-divider { display: none; }
+    .attachment-card { flex-direction: column; align-items: flex-start; }
+    .btn-download { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="
+        {% if request.session.role == 'ADMIN' %}{% url 'admin_dashboard' %}
+        {% elif request.session.role == 'FACULTY' %}{% url 'faculty_dashboard' %}
+        {% else %}{% url 'student_dashboard' %}{% endif %}
+        " class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Notice Card -->
+    <div class="notice-hero">
+        <!-- Colored top strip based on scope -->
+        <div class="notice-banner
+            {% if notice.6 and notice.7 %}sem
+            {% elif notice.6 %}dept
+            {% endif %}
+        "></div>
+
+        <div class="notice-hero-body">
+
+            <!-- Title -->
+            <h1 class="notice-title">{{ notice.1 }}</h1>
+
+            <!-- Meta Row -->
+            <div class="notice-meta-row">
+
+                <!-- Scope Badge -->
+                {% if not notice.6 and not notice.7 %}
+                    <span class="badge badge-global">🌍 Global</span>
+                {% elif notice.6 and not notice.7 %}
+                    <span class="badge badge-dept">🏢 {{ notice.6 }}</span>
+                {% elif notice.6 and notice.7 %}
+                    <span class="badge badge-sem">🎓 {{ notice.6 }} · Sem {{ notice.7 }}</span>
+                {% endif %}
+
+                <div class="meta-divider"></div>
+
+                <div class="meta-item">
+                    <span>👤</span>
+                    <span>Posted by <strong>{{ notice.5 }}</strong></span>
+                </div>
+
+                <div class="meta-divider"></div>
+
+                <div class="meta-item">
+                    <span>📅</span>
+                    <span>{{ notice.4|date:"F d, Y · h:i A" }}</span>
+                </div>
+
+            </div>
+
+            <!-- Content -->
+            <div class="notice-content">{{ notice.2 }}</div>
+
+        </div>
+    </div>
+
+    <!-- Attachment -->
+    {% if notice.3 %}
+    <div class="attachment-card">
+        <div class="attachment-icon">📎</div>
+        <div class="attachment-info">
+            <div class="attachment-label">Attachment</div>
+            <div class="attachment-name">{{ notice.3 }}</div>
+        </div>
+        <a href="/media/{{ notice.3 }}" target="_blank" class="btn-download">
+            <span>⬇️</span>
+            <span>Download</span>
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+</script>
+
+</body>
+</html>

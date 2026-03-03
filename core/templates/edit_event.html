@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Event - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar {
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+}
+
+.nav-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Page header */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.page-header p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 0.4rem;
+}
+
+body.dark-mode .page-header p { color: #94a3b8; }
+
+/* Form layout */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+/* Card */
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+body.dark-mode .card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.875rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+body.dark-mode .card-title {
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+}
+
+/* Form Groups */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+body.dark-mode .form-group label { color: #94a3b8; }
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    padding: 0.7rem 0.875rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background: white;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group textarea,
+body.dark-mode .form-group select {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group textarea:focus,
+body.dark-mode .form-group select:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #94a3b8;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.6;
+}
+
+/* File Upload */
+.file-upload-wrapper {
+    position: relative;
+}
+
+.file-upload-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f8fafc;
+}
+
+body.dark-mode .file-upload-label {
+    border-color: #475569;
+    background: #0f172a;
+}
+
+.file-upload-label:hover {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+body.dark-mode .file-upload-label:hover {
+    border-color: #60a5fa;
+    background: #1e3a8a20;
+}
+
+.file-upload-label .upload-icon {
+    font-size: 1.5rem;
+}
+
+.file-upload-label .upload-text {
+    flex: 1;
+}
+
+.upload-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+body.dark-mode .upload-title { color: #94a3b8; }
+
+.upload-hint {
+    font-size: 0.775rem;
+    color: #94a3b8;
+    margin-top: 0.15rem;
+}
+
+.file-upload-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+/* Current poster preview */
+.current-poster {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+}
+
+body.dark-mode .current-poster {
+    background: #14532d30;
+    border-color: #166534;
+}
+
+.current-poster img {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.current-poster-text {
+    flex: 1;
+}
+
+.current-poster-text p {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #166534;
+}
+
+body.dark-mode .current-poster-text p { color: #86efac; }
+
+.current-poster-text span {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+body.dark-mode .current-poster-text span { color: #94a3b8; }
+
+/* Submit button */
+.form-footer {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.btn-submit {
+    flex: 1;
+    padding: 0.875rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-submit:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+body.dark-mode .btn-submit { background: #60a5fa; color: #0f172a; }
+body.dark-mode .btn-submit:hover { background: #3b82f6; }
+
+.btn-cancel {
+    padding: 0.875rem 1.5rem;
+    background: #f1f5f9;
+    color: #475569;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-cancel:hover { background: #e2e8f0; }
+body.dark-mode .btn-cancel { background: #334155; color: #94a3b8; }
+body.dark-mode .btn-cancel:hover { background: #475569; }
+
+/* Responsive */
+@media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid .full-width { grid-column: 1; }
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .form-footer { flex-direction: column; }
+    .btn-cancel { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="javascript:history.back()" class="back-link">
+            <span>←</span>
+            <span>Back</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>✏️</span>
+            <span>Edit Event</span>
+        </h1>
+        <p>Update the details below and save your changes</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Basic Info -->
+        <div class="card">
+            <div class="card-title">
+                <span>📋</span>
+                <span>Basic Information</span>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="title">Event Title *</label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        value="{{ event.0 }}"
+                        placeholder="Enter event title"
+                        required
+                    >
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="description">Description *</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Describe the event..."
+                        required
+                    >{{ event.1 }}</textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="venue">Venue *</label>
+                    <input
+                        type="text"
+                        id="venue"
+                        name="venue"
+                        value="{{ event.5 }}"
+                        placeholder="e.g. Main Auditorium, Room 101"
+                        required
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- Date & Time -->
+        <div class="card">
+            <div class="card-title">
+                <span>🗓️</span>
+                <span>Date & Time</span>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="event_date">Event Date *</label>
+                    <input
+                        type="date"
+                        id="event_date"
+                        name="event_date"
+                        value="{{ event.2 }}"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="start_time">Start Time *</label>
+                    <input
+                        type="time"
+                        id="start_time"
+                        name="start_time"
+                        value="{{ event.3 }}"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="end_time">End Time *</label>
+                    <input
+                        type="time"
+                        id="end_time"
+                        name="end_time"
+                        value="{{ event.4 }}"
+                        required
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration & Poster -->
+        <div class="card">
+            <div class="card-title">
+                <span>🔗</span>
+                <span>Registration & Media</span>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="google_form_link">Google Form / Registration Link</label>
+                    <input
+                        type="url"
+                        id="google_form_link"
+                        name="google_form_link"
+                        value="{{ event.6 }}"
+                        placeholder="https://forms.google.com/..."
+                    >
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Event Poster</label>
+                    {% if event.7 %}
+                    <div class="current-poster">
+                        <img src="/media/{{ event.7 }}" alt="Current poster">
+                        <div class="current-poster-text">
+                            <p>✅ Current poster uploaded</p>
+                            <span>Upload a new file below to replace it</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="file-upload-wrapper">
+                        <div class="file-upload-label" id="fileLabel">
+                            <span class="upload-icon">🖼️</span>
+                            <div class="upload-text">
+                                <div class="upload-title" id="uploadTitle">
+                                    {% if event.7 %}Replace poster{% else %}Upload poster{% endif %}
+                                </div>
+                                <div class="upload-hint">JPG, PNG or WEBP — max 5MB</div>
+                            </div>
+                        </div>
+                        <input
+                            type="file"
+                            name="poster"
+                            accept="image/*"
+                            class="file-upload-input"
+                            id="posterInput"
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="form-footer">
+            <a href="javascript:history.back()" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-submit">
+                <span>🚀</span>
+                <span>Update Event</span>
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const body = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Disable past dates on date input
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('event_date').setAttribute('min', today);
+
+// File input label update
+document.getElementById('posterInput').addEventListener('change', function () {
+    const fileName = this.files[0]?.name;
+    if (fileName) {
+        document.getElementById('uploadTitle').textContent = fileName;
+    }
+});
+</script>
+
+</body>
+</html>

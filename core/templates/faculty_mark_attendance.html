@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mark Attendance - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+/* Page Header */
+.page-header { margin-bottom: 2rem; }
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+/* Filter Card */
+.filter-card {
+    background: white;
+    border-radius: 14px;
+    padding: 1.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+}
+
+body.dark-mode .filter-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+body.dark-mode .filter-group label { color: #94a3b8; }
+
+.filter-group select,
+.filter-group input {
+    padding: 0.7rem 0.875rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background: white;
+    transition: all 0.2s;
+}
+
+body.dark-mode .filter-group select,
+body.dark-mode .filter-group input {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.btn-load {
+    padding: 0.7rem 1.5rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    align-self: flex-end;
+}
+
+.btn-load:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+body.dark-mode .btn-load { background: #60a5fa; color: #0f172a; }
+
+/* Attendance Card */
+.attendance-card {
+    background: white;
+    border-radius: 14px;
+    padding: 1.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .attendance-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+body.dark-mode .card-header { border-bottom-color: #334155; }
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+body.dark-mode .card-title { color: #f1f5f9; }
+
+.bulk-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-bulk {
+    padding: 0.5rem 0.875rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-all {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.btn-all:hover { background: #bbf7d0; }
+body.dark-mode .btn-all { background: #14532d; color: #86efac; }
+
+.btn-none {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.btn-none:hover { background: #fecaca; }
+body.dark-mode .btn-none { background: #7f1d1d; color: #fca5a5; }
+
+/* Student List */
+.student-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.student-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+body.dark-mode .student-row {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+.student-row:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+body.dark-mode .student-row:hover {
+    background: #1e293b;
+    border-color: #475569;
+}
+
+.student-row.present {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+body.dark-mode .student-row.present {
+    background: #14532d30;
+    border-color: #22c55e;
+}
+
+.student-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.student-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.student-info {
+    flex: 1;
+}
+
+.student-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #0f172a;
+}
+
+body.dark-mode .student-name { color: #f1f5f9; }
+
+.student-id {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 0.1rem;
+}
+
+body.dark-mode .student-id { color: #94a3b8; }
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 0.875rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-submit:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+body.dark-mode .btn-submit { background: #60a5fa; color: #0f172a; }
+body.dark-mode .btn-submit:hover { background: #3b82f6; }
+
+.btn-submit:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #94a3b8;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .filter-grid { grid-template-columns: 1fr; }
+    .card-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="{% url 'faculty_dashboard' %}" class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📝</span>
+            <span>Mark Attendance</span>
+        </h1>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="filter-card">
+        <form method="post" id="filterForm">
+            {% csrf_token %}
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label for="class_id">Class *</label>
+                    <select name="class_id" id="class_id" required>
+                        <option value="">— Select class —</option>
+                        {% for c in classes %}
+                            <option value="{{ c.0 }}" {% if c.0|stringformat:"s" == selected_class_id %}selected{% endif %}>
+                                {{ c.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="subject_id">Subject *</label>
+                    <select name="subject_id" id="subject_id" required>
+                        <option value="">— Select subject —</option>
+                        {% for sub in subjects %}
+                            <option value="{{ sub.0 }}">{{ sub.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="lecture_date">Date *</label>
+                    <input type="date" name="lecture_date" id="lecture_date" required>
+                </div>
+
+                <div class="filter-group">
+                    <label for="timetable_id">Lecture Slot *</label>
+                    <select name="timetable_id" id="timetable_id" required>
+                        <option value="">— Select slot —</option>
+                        {% for t in timetable_slots %}
+                            <option value="{{ t.0 }}">{{ t.1 }} | {{ t.2 }}-{{ t.3 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" name="load_students" class="btn-load">Load Students</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Attendance Marking (only show after loading students) -->
+    {% if students %}
+    <div class="attendance-card">
+        <div class="card-header">
+            <div class="card-title">Mark Attendance ({{ students|length }} Students)</div>
+            <div class="bulk-actions">
+                <button type="button" class="btn-bulk btn-all" onclick="selectAll()">✓ All Present</button>
+                <button type="button" class="btn-bulk btn-none" onclick="selectNone()">✕ Clear All</button>
+            </div>
+        </div>
+
+        <form method="post" id="attendanceForm">
+            {% csrf_token %}
+            <input type="hidden" name="class_id" value="{{ selected_class_id }}">
+            <input type="hidden" name="subject_id" value="{{ selected_subject_id }}">
+            <input type="hidden" name="lecture_date" value="{{ selected_date }}">
+            <input type="hidden" name="timetable_id" value="{{ selected_timetable_id }}">
+
+            <div class="student-list">
+                {% for s in students %}
+                <label class="student-row" id="row-{{ s.0 }}">
+                    <input
+                        type="checkbox"
+                        name="present_students"
+                        value="{{ s.0 }}"
+                        class="student-checkbox"
+                        onchange="toggleRow({{ s.0 }})"
+                    >
+                    <div class="student-avatar">{{ s.1|slice:":1"|upper }}</div>
+                    <div class="student-info">
+                        <div class="student-name">{{ s.1 }}</div>
+                        <div class="student-id">ID: {{ s.0 }}</div>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <span>✓</span>
+                <span>Submit Attendance</span>
+            </button>
+        </form>
+    </div>
+    {% elif selected_class_id %}
+    <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <div>No students found for the selected class</div>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Set max date to today
+const today = new Date().toISOString().split('T')[0];
+const dateInput = document.getElementById('lecture_date');
+if (dateInput) {
+    dateInput.setAttribute('max', today);
+}
+
+// Bulk actions
+function selectAll() {
+    document.querySelectorAll('.student-checkbox').forEach(cb => {
+        cb.checked = true;
+        toggleRow(cb.value);
+    });
+}
+
+function selectNone() {
+    document.querySelectorAll('.student-checkbox').forEach(cb => {
+        cb.checked = false;
+        toggleRow(cb.value);
+    });
+}
+
+// Toggle row highlight
+function toggleRow(studentId) {
+    const row = document.getElementById(`row-${studentId}`);
+    const checkbox = row.querySelector('.student-checkbox');
+    if (checkbox.checked) {
+        row.classList.add('present');
+    } else {
+        row.classList.remove('present');
+    }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Timetable - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 1300px; margin: 0 auto; padding: 2rem; }
+
+/* Page Header */
+.page-header { margin-bottom: 2rem; }
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.page-header p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 0.4rem;
+}
+
+body.dark-mode .page-header p { color: #94a3b8; }
+
+/* Today Indicator */
+.today-indicator {
+    display: inline-block;
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+body.dark-mode .today-indicator { background: #1e3a8a; color: #bfdbfe; }
+
+/* Timetable Card */
+.timetable-card {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .timetable-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+/* Table Header */
+thead th {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    background: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+body.dark-mode thead th {
+    background: #0f172a;
+    border-bottom-color: #334155;
+    color: #94a3b8;
+}
+
+/* Today column highlight */
+thead th.today {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+body.dark-mode thead th.today {
+    background: #1e3a8a;
+    color: #bfdbfe;
+}
+
+/* Time column */
+th.time-col,
+td.time-col {
+    position: sticky;
+    left: 0;
+    z-index: 20;
+    background: white;
+    font-weight: 600;
+    color: #475569;
+    border-right: 2px solid #e2e8f0;
+    min-width: 100px;
+}
+
+body.dark-mode th.time-col,
+body.dark-mode td.time-col {
+    background: #1e293b;
+    border-right-color: #334155;
+    color: #94a3b8;
+}
+
+thead th.time-col {
+    background: #f8fafc;
+}
+
+body.dark-mode thead th.time-col { background: #0f172a; }
+
+/* Table Body */
+tbody td {
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+body.dark-mode tbody td { border-bottom-color: #334155; }
+
+tbody tr:hover td {
+    background: #f8fafc;
+}
+
+body.dark-mode tbody tr:hover td { background: #334155; }
+
+tbody tr:hover td.time-col {
+    background: white;
+}
+
+body.dark-mode tbody tr:hover td.time-col { background: #1e293b; }
+
+/* Today column cells */
+td.today-col {
+    background: #eff6ff;
+}
+
+body.dark-mode td.today-col { background: #1e3a8a20; }
+
+tbody tr:hover td.today-col {
+    background: #dbeafe;
+}
+
+body.dark-mode tbody tr:hover td.today-col { background: #1e3a8a40; }
+
+/* Subject Block */
+.subject-block {
+    background: linear-gradient(135deg, #dbeafe 0%, #c7d2fe 100%);
+    border: 1px solid #bfdbfe;
+    border-left: 3px solid #2563eb;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+body.dark-mode .subject-block {
+    background: linear-gradient(135deg, #1e3a8a 0%, #4c1d95 100%);
+    border-color: #3b82f6;
+    border-left-color: #60a5fa;
+}
+
+.subject-block:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+}
+
+.subject-name {
+    font-weight: 600;
+    color: #1e40af;
+    margin-bottom: 0.25rem;
+}
+
+body.dark-mode .subject-name { color: #bfdbfe; }
+
+.subject-meta {
+    font-size: 0.75rem;
+    color: #3b82f6;
+}
+
+body.dark-mode .subject-meta { color: #93c5fd; }
+
+/* Color variations for different subjects */
+.subject-block:nth-child(odd) {
+    background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 100%);
+    border-left-color: #22c55e;
+}
+
+body.dark-mode .subject-block:nth-child(odd) {
+    background: linear-gradient(135deg, #14532d 0%, #166534 100%);
+    border-left-color: #22c55e;
+}
+
+.subject-block:nth-child(odd) .subject-name { color: #166534; }
+body.dark-mode .subject-block:nth-child(odd) .subject-name { color: #86efac; }
+
+.subject-block:nth-child(odd) .subject-meta { color: #22c55e; }
+body.dark-mode .subject-block:nth-child(odd) .subject-meta { color: #4ade80; }
+
+/* Empty Cell */
+.empty-cell {
+    color: #cbd5e1;
+    font-size: 1.25rem;
+}
+
+body.dark-mode .empty-cell { color: #475569; }
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 5rem 2rem;
+}
+
+.empty-icon {
+    width: 72px;
+    height: 72px;
+    background: #f0f9ff;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+body.dark-mode .empty-icon { background: #1e3a8a30; }
+
+.empty-state h3 { font-size: 1.1rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem; }
+body.dark-mode .empty-state h3 { color: #94a3b8; }
+.empty-state p { font-size: 0.9rem; color: #94a3b8; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .table-wrapper {
+        overflow-x: scroll;
+    }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="{% url 'faculty_dashboard' %}" class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📅</span>
+            <span>My Teaching Timetable</span>
+        </h1>
+        <p>Your weekly teaching schedule</p>
+    </div>
+
+    {% if grid %}
+
+    <!-- Timetable Card -->
+    <div class="timetable-card">
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="time-col">Time</th>
+                        {% for day in days %}
+                            <th id="day-{{ forloop.counter0 }}">{{ day }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in grid %}
+                    <tr>
+                        <td class="time-col">{{ row.time }}</td>
+                        {% for cell in row.cells %}
+                            <td id="cell-{{ forloop.parentloop.counter0 }}-{{ forloop.counter0 }}">
+                                {% if cell %}
+                                    <div class="subject-block">
+                                        <div class="subject-name">{{ cell }}</div>
+                                        <div class="subject-meta">{{ row.time }}</div>
+                                    </div>
+                                {% else %}
+                                    <span class="empty-cell">—</span>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% else %}
+
+    <!-- Empty State -->
+    <div class="timetable-card">
+        <div class="empty-state">
+            <div class="empty-icon">📅</div>
+            <h3>No Timetable Available</h3>
+            <p>Your teaching schedule hasn't been set up yet.</p>
+        </div>
+    </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Highlight today's column
+const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const today = new Date().getDay();
+const todayIndex = today === 0 ? 6 : today - 1; // Convert Sunday=0 to index 6
+
+// Add today class to header
+const todayHeader = document.getElementById(`day-${todayIndex}`);
+if (todayHeader) {
+    todayHeader.classList.add('today');
+    
+    // Add indicator
+    const indicator = document.createElement('span');
+    indicator.className = 'today-indicator';
+    indicator.textContent = 'Today';
+    todayHeader.appendChild(indicator);
+}
+
+// Add today class to all cells in that column
+const rows = document.querySelectorAll('tbody tr');
+rows.forEach((row, rowIndex) => {
+    const cell = document.getElementById(`cell-${rowIndex}-${todayIndex}`);
+    if (cell) cell.classList.add('today-col');
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Event - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Page Header */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.page-header p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 0.4rem;
+}
+
+body.dark-mode .page-header p { color: #94a3b8; }
+
+/* Card */
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+body.dark-mode .card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.875rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+body.dark-mode .card-title {
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+}
+
+/* Form Grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.form-grid .full-width { grid-column: 1 / -1; }
+
+/* Form Group */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+body.dark-mode .form-group label { color: #94a3b8; }
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    padding: 0.7rem 0.875rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background: white;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group textarea,
+body.dark-mode .form-group select {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group textarea:focus,
+body.dark-mode .form-group select:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.1);
+}
+
+.form-group input.error-field { border-color: #ef4444; }
+.form-group input.error-field:focus { box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: #94a3b8; }
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.6;
+}
+
+select option { background: white; color: #1e293b; }
+body.dark-mode select option { background: #334155; color: #f1f5f9; }
+
+select:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+body.dark-mode select:disabled {
+    background: #1e293b;
+    color: #64748b;
+}
+
+/* Inline error */
+.field-error {
+    font-size: 0.8rem;
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: -0.25rem;
+}
+
+/* File Upload */
+.file-upload-wrapper { position: relative; }
+
+.file-upload-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f8fafc;
+}
+
+body.dark-mode .file-upload-label { border-color: #475569; background: #0f172a; }
+.file-upload-label:hover { border-color: #2563eb; background: #eff6ff; }
+body.dark-mode .file-upload-label:hover { border-color: #60a5fa; background: #1e3a8a20; }
+
+.upload-icon { font-size: 1.4rem; }
+.upload-title { font-size: 0.875rem; font-weight: 500; color: #475569; }
+body.dark-mode .upload-title { color: #94a3b8; }
+.upload-hint { font-size: 0.775rem; color: #94a3b8; margin-top: 0.15rem; }
+
+.file-upload-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+/* Scope Toggle */
+.scope-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.scope-option { position: relative; }
+
+.scope-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.scope-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f8fafc;
+    text-align: center;
+}
+
+body.dark-mode .scope-label { border-color: #334155; background: #0f172a; }
+.scope-label:hover { border-color: #2563eb; background: #eff6ff; }
+body.dark-mode .scope-label:hover { border-color: #60a5fa; background: #1e3a8a20; }
+
+.scope-option input[type="radio"]:checked + .scope-label {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+body.dark-mode .scope-option input[type="radio"]:checked + .scope-label {
+    border-color: #60a5fa;
+    background: #1e3a8a30;
+}
+
+.scope-icon { font-size: 1.5rem; }
+.scope-name { font-size: 0.875rem; font-weight: 600; color: #1e293b; }
+body.dark-mode .scope-name { color: #e2e8f0; }
+.scope-desc { font-size: 0.75rem; color: #64748b; }
+body.dark-mode .scope-desc { color: #94a3b8; }
+
+/* Scope target fields */
+.scope-target {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.3s ease;
+    margin-top: 0;
+}
+
+.scope-target.visible {
+    max-height: 200px;
+    opacity: 1;
+    margin-top: 1.25rem;
+}
+
+/* Submit footer */
+.form-footer {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.btn-submit {
+    flex: 1;
+    padding: 0.875rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-submit:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+body.dark-mode .btn-submit { background: #60a5fa; color: #0f172a; }
+body.dark-mode .btn-submit:hover { background: #3b82f6; }
+
+.btn-cancel {
+    padding: 0.875rem 1.5rem;
+    background: #f1f5f9;
+    color: #475569;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-cancel:hover { background: #e2e8f0; }
+body.dark-mode .btn-cancel { background: #334155; color: #94a3b8; }
+body.dark-mode .btn-cancel:hover { background: #475569; }
+
+/* Responsive */
+@media (max-width: 640px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid .full-width { grid-column: 1; }
+    .scope-selector { grid-template-columns: 1fr 1fr; }
+    .scope-target { grid-template-columns: 1fr; }
+    .form-footer { flex-direction: column; }
+    .btn-cancel { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="
+        {% if request.session.role == 'ADMIN' %}{% url 'admin_dashboard' %}
+        {% elif request.session.role == 'FACULTY' %}{% url 'faculty_dashboard' %}
+        {% else %}{% url 'student_dashboard' %}{% endif %}
+        " class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>🎉</span>
+            <span>Create Event</span>
+        </h1>
+        <p>Fill in the details below to publish a new event</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="eventForm">
+        {% csrf_token %}
+
+        <!-- Basic Info -->
+        <div class="card">
+            <div class="card-title">
+                <span>📋</span>
+                <span>Basic Information</span>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="title">Event Title *</label>
+                    <input type="text" id="title" name="title" placeholder="e.g. Annual Tech Fest 2025" required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="description">Description *</label>
+                    <textarea id="description" name="description" placeholder="Describe the event..." required></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="venue">Venue *</label>
+                    <input type="text" id="venue" name="venue" placeholder="e.g. Main Auditorium, Room 101" required>
+                </div>
+
+                {% if role == 'ADMIN' %}
+                <div class="form-group full-width">
+                    <label for="faculty_incharge_id">Faculty In-Charge *</label>
+                    <select id="faculty_incharge_id" name="faculty_incharge_id" required>
+                        <option value="">— Select Faculty —</option>
+                        {% for f in faculties %}
+                        <option value="{{ f.0 }}">{{ f.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Date & Time -->
+        <div class="card">
+            <div class="card-title">
+                <span>🗓️</span>
+                <span>Date & Time</span>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="event_date">Event Date *</label>
+                    <input type="date" id="event_date" name="event_date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="start_time">Start Time *</label>
+                    <input type="time" id="start_time" name="start_time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="end_time">End Time *</label>
+                    <input type="time" id="end_time" name="end_time" required>
+                    <div class="field-error" id="timeError" style="display:none;">
+                        <span>⚠️</span>
+                        <span>End time must be after start time</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration & Media -->
+        <div class="card">
+            <div class="card-title">
+                <span>🔗</span>
+                <span>Registration & Media</span>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="google_form_link">Registration Link *</label>
+                    <input type="url" id="google_form_link" name="google_form_link" placeholder="https://forms.google.com/..." required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Event Poster <span style="color:#94a3b8; font-weight:400;">(optional)</span></label>
+                    <div class="file-upload-wrapper">
+                        <div class="file-upload-label">
+                            <span class="upload-icon">🖼️</span>
+                            <div>
+                                <div class="upload-title" id="uploadTitle">Click to upload poster</div>
+                                <div class="upload-hint">JPG, PNG or WEBP — max 5MB</div>
+                            </div>
+                        </div>
+                        <input type="file" name="poster" accept="image/*" class="file-upload-input" id="posterInput">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audience / Scope -->
+        <div class="card">
+            <div class="card-title">
+                <span>🎯</span>
+                <span>Target Audience</span>
+            </div>
+
+            <div class="form-group">
+                <label>Scope *</label>
+                <div class="scope-selector">
+                    <div class="scope-option">
+                        <input type="radio" name="scope" id="scope_global" value="GLOBAL" checked onchange="handleScopeChange()">
+                        <label class="scope-label" for="scope_global">
+                            <span class="scope-icon">🌐</span>
+                            <span class="scope-name">Global</span>
+                            <span class="scope-desc">Visible to everyone</span>
+                        </label>
+                    </div>
+                    <div class="scope-option">
+                        <input type="radio" name="scope" id="scope_dept" value="DEPARTMENT" onchange="handleScopeChange()">
+                        <label class="scope-label" for="scope_dept">
+                            <span class="scope-icon">🏢</span>
+                            <span class="scope-name">Department</span>
+                            <span class="scope-desc">Specific dept / semester</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dept + Semester (revealed when Dept selected) -->
+            <div class="scope-target" id="scopeTarget">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="department_id">Department</label>
+                    <select name="department_id" id="department">
+                        <option value="">— Select Department —</option>
+                        {% for d in departments %}
+                        <option value="{{ d.0 }}">{{ d.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="semester_id">Semester <span style="color:#94a3b8; font-weight:400;">(optional)</span></label>
+                    <select name="semester_id" id="semester" disabled>
+                        <option value="">— Select Department first —</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="form-footer">
+            <a href="javascript:history.back()" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-submit">
+                <span>🎉</span>
+                <span>Create Event</span>
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+function initPage() {
+    disablePastDates();
+    validateTime();
+    blockPastTimeToday();
+}
+
+function disablePastDates() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('event_date').setAttribute('min', today);
+}
+
+// Scope toggle
+function handleScopeChange() {
+    const isDept  = document.getElementById('scope_dept').checked;
+    const target  = document.getElementById('scopeTarget');
+    const deptSel = document.getElementById('department');
+    const semSel  = document.getElementById('semester');
+
+    if (isDept) {
+        target.classList.add('visible');
+    } else {
+        target.classList.remove('visible');
+        deptSel.value = '';
+        semSel.innerHTML = '<option value="">— Select Department first —</option>';
+        semSel.disabled = true;
+    }
+}
+
+// Department → Semester AJAX
+document.getElementById('department').addEventListener('change', function () {
+    const deptId = this.value;
+    const semSelect = document.getElementById('semester');
+
+    if (!deptId) {
+        semSelect.innerHTML = '<option value="">— Select Department first —</option>';
+        semSelect.disabled = true;
+        return;
+    }
+
+    semSelect.innerHTML = '<option value="">Loading...</option>';
+    semSelect.disabled = true;
+
+    fetch(`/ajax/get-semesters/?department_id=${deptId}`)
+        .then(r => r.json())
+        .then(data => {
+            semSelect.innerHTML = '<option value="">— All Semesters —</option>';
+            data.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.id;
+                opt.textContent = `Semester ${s.number}`;
+                semSelect.appendChild(opt);
+            });
+            semSelect.disabled = false;
+        })
+        .catch(() => {
+            semSelect.innerHTML = '<option value="">Error loading semesters</option>';
+        });
+});
+
+function validateTime() {
+    const start     = document.getElementById('start_time');
+    const end       = document.getElementById('end_time');
+    const timeError = document.getElementById('timeError');
+
+    function checkTime() {
+        if (start.value && end.value && end.value <= start.value) {
+            timeError.style.display = 'flex';
+            timeError.querySelector('span:last-child').textContent = 'End time must be after start time';
+            end.classList.add('error-field');
+            end.setCustomValidity('Invalid');
+        } else {
+            timeError.style.display = 'none';
+            end.classList.remove('error-field');
+            end.setCustomValidity('');
+        }
+    }
+
+    start.addEventListener('change', checkTime);
+    end.addEventListener('change', checkTime);
+}
+
+function blockPastTimeToday() {
+    const form = document.getElementById('eventForm');
+
+    form.addEventListener('submit', function (e) {
+        const dateVal  = document.getElementById('event_date').value;
+        const startVal = document.getElementById('start_time').value;
+        const now      = new Date();
+        const todayStr = now.toISOString().split('T')[0];
+
+        if (dateVal === todayStr) {
+            const currentTime =
+                now.getHours().toString().padStart(2, '0') + ':' +
+                now.getMinutes().toString().padStart(2, '0');
+
+            if (startVal <= currentTime) {
+                e.preventDefault();
+                const timeError = document.getElementById('timeError');
+                timeError.style.display = 'flex';
+                timeError.querySelector('span:last-child').textContent =
+                    'Start time has already passed for today';
+                document.getElementById('start_time').classList.add('error-field');
+                document.getElementById('start_time').focus();
+            }
+        }
+    });
+}
+
+// File label update
+document.getElementById('posterInput').addEventListener('change', function () {
+    const name = this.files[0]?.name;
+    if (name) document.getElementById('uploadTitle').textContent = name;
+});
+
+window.onload = initPage;
+</script>
+
+</body>
+</html>

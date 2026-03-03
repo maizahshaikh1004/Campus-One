@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Notices - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.count-badge {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+body.dark-mode .count-badge { background: #1e3a8a; color: #bfdbfe; }
+
+/* Filter Panel */
+.filter-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+body.dark-mode .filter-panel { background: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+.search-box {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.65rem 0.875rem 0.65rem 2.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background: white;
+    transition: all 0.2s;
+}
+
+body.dark-mode .search-box input {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+body.dark-mode .search-box input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.1);
+}
+
+.filter-group {
+    display: flex;
+    gap: 0.4rem;
+    background: #f1f5f9;
+    padding: 0.3rem;
+    border-radius: 8px;
+}
+
+body.dark-mode .filter-group { background: #334155; }
+
+.filter-tab {
+    padding: 0.4rem 0.875rem;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+body.dark-mode .filter-tab { color: #94a3b8; }
+
+.filter-tab:hover { color: #475569; }
+body.dark-mode .filter-tab:hover { color: #cbd5e1; }
+
+.filter-tab.active {
+    background: white;
+    color: #2563eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .filter-tab.active { background: #1e293b; color: #60a5fa; }
+
+/* Notice Cards */
+.notices-list { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.notice-card {
+    background: white;
+    border-radius: 14px;
+    padding: 1.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+body.dark-mode .notice-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.notice-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border-color: #e2e8f0;
+}
+
+body.dark-mode .notice-card:hover { border-color: #334155; }
+
+.notice-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.75rem;
+}
+
+body.dark-mode .notice-title { color: #f1f5f9; }
+
+.notice-content {
+    font-size: 0.95rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+body.dark-mode .notice-content { color: #94a3b8; }
+
+/* Badges Row */
+.badges-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-global { background: #dcfce7; color: #166534; }
+body.dark-mode .badge-global { background: #14532d; color: #86efac; }
+
+.badge-dept { background: #fef3c7; color: #92400e; }
+body.dark-mode .badge-dept { background: #78350f; color: #fde68a; }
+
+.badge-sem { background: #dbeafe; color: #1e40af; }
+body.dark-mode .badge-sem { background: #1e3a8a; color: #bfdbfe; }
+
+/* Meta Row */
+.meta-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+body.dark-mode .meta-row { color: #94a3b8; }
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.meta-divider {
+    width: 4px;
+    height: 4px;
+    background: #cbd5e1;
+    border-radius: 50%;
+}
+
+body.dark-mode .meta-divider { background: #475569; }
+
+/* Actions */
+.actions-row {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+}
+
+body.dark-mode .actions-row { border-top-color: #334155; }
+
+.btn {
+    padding: 0.45rem 0.875rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.btn-download { background: #dbeafe; color: #1e40af; }
+.btn-download:hover { background: #bfdbfe; transform: translateY(-1px); }
+body.dark-mode .btn-download { background: #1e3a8a; color: #bfdbfe; }
+
+.btn-edit { background: #fef3c7; color: #92400e; }
+.btn-edit:hover { background: #fde68a; transform: translateY(-1px); }
+body.dark-mode .btn-edit { background: #78350f; color: #fde68a; }
+
+.btn-delete { background: #fee2e2; color: #991b1b; }
+.btn-delete:hover { background: #fecaca; transform: translateY(-1px); }
+body.dark-mode .btn-delete { background: #7f1d1d; color: #fca5a5; }
+
+/* Empty State */
+.empty-state {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    gap: 1rem;
+    text-align: center;
+}
+
+body.dark-mode .empty-state { background: #1e293b; }
+
+.empty-icon {
+    width: 72px;
+    height: 72px;
+    background: #f0f9ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+body.dark-mode .empty-icon { background: #1e3a8a30; }
+
+.empty-state h3 { font-size: 1.1rem; font-weight: 600; color: #475569; }
+body.dark-mode .empty-state h3 { color: #94a3b8; }
+.empty-state p { font-size: 0.9rem; color: #94a3b8; }
+
+/* No Results */
+.no-results {
+    display: none;
+    text-align: center;
+    padding: 3rem;
+    color: #94a3b8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .filter-panel { flex-direction: column; }
+    .actions-row { flex-direction: column; }
+    .btn { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="
+        {% if request.session.role == 'ADMIN' %}{% url 'admin_dashboard' %}
+        {% elif request.session.role == 'FACULTY' %}{% url 'faculty_dashboard' %}
+        {% else %}{% url 'student_dashboard' %}{% endif %}
+        " class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📢</span>
+            <span>My Notices</span>
+        </h1>
+        {% if notices %}
+        <div class="count-badge" id="countBadge">{{ notices|length }} Notices</div>
+        {% endif %}
+    </div>
+
+    {% if notices %}
+
+    <!-- Filter Panel -->
+    <div class="filter-panel">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search notices..."
+                autocomplete="off"
+            >
+        </div>
+        <div class="filter-group">
+            <button class="filter-tab active" data-scope="all">All</button>
+            <button class="filter-tab" data-scope="global">🌐 Global</button>
+            <button class="filter-tab" data-scope="dept">🏢 Department</button>
+            <button class="filter-tab" data-scope="semester">📅 Semester</button>
+        </div>
+    </div>
+
+    <!-- Notices List -->
+    <div class="notices-list">
+        {% for n in notices %}
+        <div class="notice-card"
+             data-title="{{ n.1|lower }}"
+             data-content="{{ n.2|lower }}"
+             data-scope="{% if n.4 %}semester{% elif n.3 %}dept{% else %}global{% endif %}">
+
+            <a href="{% url 'notice_detail' n.0 %}" style="text-decoration:none; color:inherit;">
+                <div class="notice-title">{{ n.1 }}</div>
+                <div class="notice-content">{{ n.2 }}</div>
+
+                <!-- Badges -->
+                <div class="badges-row">
+                    {% if n.3 %}
+                        <span class="badge badge-dept">🏢 {{ n.3 }}</span>
+                        {% if n.4 %}
+                            <span class="badge badge-sem">📅 Sem {{ n.4 }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge badge-global">🌐 Global</span>
+                    {% endif %}
+                </div>
+
+                <!-- Meta -->
+                <div class="meta-row">
+                    <div class="meta-item">
+                        <span>📅</span>
+                        <span>{{ n.5 }}</span>
+                    </div>
+                    <div class="meta-divider"></div>
+                    <div class="meta-item">
+                        <span>👤</span>
+                        <span>{{ n.7 }}</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Actions -->
+            <div class="actions-row">
+                {% if n.6 %}
+                <a href="/media/{{ n.6 }}" target="_blank" class="btn btn-download" onclick="event.stopPropagation();">
+                    <span>📎</span>
+                    <span>Download</span>
+                </a>
+                {% endif %}
+
+                <a href="{% url 'edit_notice' n.0 %}" class="btn btn-edit" onclick="event.stopPropagation();">
+                    <span>✏️</span>
+                    <span>Edit</span>
+                </a>
+
+                <a href="{% url 'delete_notice' n.0 %}"
+                   class="btn btn-delete"
+                   onclick="event.stopPropagation(); return confirm('Delete this notice?');">
+                    <span>🗑️</span>
+                    <span>Delete</span>
+                </a>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- No Results -->
+    <div class="no-results" id="noResults">
+        <div style="font-size:2rem; margin-bottom:0.75rem;">🔍</div>
+        <div style="font-weight:600; color:#64748b; margin-bottom:0.25rem;">No notices match your search</div>
+        <div style="font-size:0.875rem;">Try a different keyword or filter</div>
+    </div>
+
+    {% else %}
+
+    <!-- Empty State -->
+    <div class="empty-state">
+        <div class="empty-icon">📢</div>
+        <h3>No Notices Yet</h3>
+        <p>You haven't created any notices.</p>
+    </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Filters
+const searchInput = document.getElementById('searchInput');
+const filterTabs  = document.querySelectorAll('.filter-tab');
+const cards       = document.querySelectorAll('.notice-card');
+const countBadge  = document.getElementById('countBadge');
+const noResults   = document.getElementById('noResults');
+const totalCount  = cards.length;
+
+let activeScope = 'all';
+
+function applyFilters() {
+    const searchText = searchInput ? searchInput.value.toLowerCase() : '';
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        const title   = card.dataset.title || '';
+        const content = card.dataset.content || '';
+        const scope   = card.dataset.scope || '';
+
+        const matchSearch = title.includes(searchText) || content.includes(searchText);
+        const matchScope  = (activeScope === 'all') || (scope === activeScope);
+
+        const isVisible = matchSearch && matchScope;
+        card.style.display = isVisible ? 'block' : 'none';
+        if (isVisible) visibleCount++;
+    });
+
+    // Update count badge
+    if (countBadge) {
+        if (visibleCount === totalCount) {
+            countBadge.textContent = `${totalCount} Notices`;
+        } else {
+            countBadge.textContent = `${visibleCount} of ${totalCount} Notices`;
+        }
+    }
+
+    // Show/hide no results
+    if (noResults) noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+}
+
+// Search input
+if (searchInput) searchInput.addEventListener('input', applyFilters);
+
+// Filter tabs
+filterTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        activeScope = tab.dataset.scope;
+        applyFilters();
+    });
+});
+</script>
+
+</body>
+</html>

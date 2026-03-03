@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assignment Submissions - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+/* Page Header */
+.page-header { margin-bottom: 2rem; }
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+/* Assignment Selector Card */
+.selector-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+}
+
+body.dark-mode .selector-card { background: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+.selector-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+body.dark-mode .selector-label { color: #94a3b8; }
+
+.selector-card select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background: white;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+body.dark-mode .selector-card select {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+.selector-card select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+select option { background: white; color: #1e293b; }
+body.dark-mode select option { background: #334155; color: #f1f5f9; }
+
+/* Filter Panel */
+.filter-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+body.dark-mode .filter-panel { background: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+.student-count {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+body.dark-mode .student-count { color: #94a3b8; }
+
+.count-num {
+    color: #2563eb;
+    font-size: 1.1rem;
+}
+
+body.dark-mode .count-num { color: #60a5fa; }
+
+.filter-tabs {
+    display: flex;
+    gap: 0.4rem;
+    background: #f1f5f9;
+    padding: 0.3rem;
+    border-radius: 8px;
+}
+
+body.dark-mode .filter-tabs { background: #334155; }
+
+.filter-tab {
+    padding: 0.4rem 0.875rem;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+body.dark-mode .filter-tab { color: #94a3b8; }
+
+.filter-tab:hover { color: #475569; }
+body.dark-mode .filter-tab:hover { color: #cbd5e1; }
+
+.filter-tab.active {
+    background: white;
+    color: #2563eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .filter-tab.active { background: #1e293b; color: #60a5fa; }
+
+/* Submission Cards */
+.submissions-list { display: flex; flex-direction: column; gap: 1rem; }
+
+.submission-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+body.dark-mode .submission-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.submission-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border-color: #e2e8f0;
+}
+
+body.dark-mode .submission-card:hover { border-color: #334155; }
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.student-info { flex: 1; }
+
+.student-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #8b5cf6);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-right: 0.75rem;
+    vertical-align: middle;
+}
+
+.student-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: inline;
+}
+
+body.dark-mode .student-name { color: #f1f5f9; }
+
+.student-id {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+}
+
+.submission-time {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+body.dark-mode .submission-time { color: #94a3b8; }
+
+/* Status Badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.875rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.badge-ontime { background: #dcfce7; color: #166534; }
+body.dark-mode .badge-ontime { background: #14532d; color: #86efac; }
+
+.badge-late { background: #fee2e2; color: #991b1b; }
+body.dark-mode .badge-late { background: #7f1d1d; color: #fca5a5; }
+
+.badge-pending { background: #fef3c7; color: #92400e; }
+body.dark-mode .badge-pending { background: #78350f; color: #fde68a; }
+
+/* View Button */
+.btn-view {
+    padding: 0.5rem 1rem;
+    background: #dbeafe;
+    color: #1e40af;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+}
+
+.btn-view:hover {
+    background: #bfdbfe;
+    transform: translateY(-1px);
+}
+
+body.dark-mode .btn-view { background: #1e3a8a; color: #bfdbfe; }
+body.dark-mode .btn-view:hover { background: #1e40af; }
+
+/* Empty State */
+.empty-state {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    gap: 1rem;
+    text-align: center;
+}
+
+body.dark-mode .empty-state { background: #1e293b; }
+
+.empty-icon {
+    width: 72px;
+    height: 72px;
+    background: #f0f9ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+body.dark-mode .empty-icon { background: #1e3a8a30; }
+
+.empty-state h3 { font-size: 1.1rem; font-weight: 600; color: #475569; }
+body.dark-mode .empty-state h3 { color: #94a3b8; }
+.empty-state p { font-size: 0.9rem; color: #94a3b8; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .filter-panel { flex-direction: column; align-items: flex-start; }
+    .card-header { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="{% url 'faculty_dashboard' %}" class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📥</span>
+            <span>Assignment Submissions</span>
+        </h1>
+    </div>
+
+    <!-- Assignment Selector -->
+    <div class="selector-card">
+        <label class="selector-label">Select Assignment</label>
+        <form method="get">
+            <select name="assignment_id" onchange="this.form.submit()" required>
+                <option value="">— Choose an assignment —</option>
+                {% for a in assignments %}
+                    <option value="{{ a.0 }}"
+                        {% if a.0|stringformat:"s" == selected_assignment_id %}selected{% endif %}>
+                        {{ a.1 }} • {{ a.2 }} • Due {{ a.3 }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    {% if selected_assignment_id %}
+
+    <!-- Filter Panel -->
+    <div class="filter-panel">
+        <div class="student-count">
+            <span>📊 Total Students:</span>
+            <span class="count-num" id="totalCount">{{ total_students }}</span>
+        </div>
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">All</button>
+            <button class="filter-tab" data-filter="ontime">✓ On Time</button>
+            <button class="filter-tab" data-filter="late">⏰ Late</button>
+            <button class="filter-tab" data-filter="pending">⏳ Pending</button>
+        </div>
+    </div>
+
+    <!-- Submissions List -->
+    <div class="submissions-list">
+
+        <!-- Submitted Students -->
+        {% for s in submissions %}
+        <div class="submission-card" data-status="{% if s.5 %}late{% else %}ontime{% endif %}">
+            <div class="card-header">
+                <div class="student-info">
+                    <div>
+                        <span class="student-avatar">{{ s.2|slice:":1"|upper }}</span>
+                        <span class="student-name">{{ s.2 }}</span>
+                    </div>
+                    <div class="student-id">ID: {{ s.1 }}</div>
+                    <div class="submission-time">
+                        <span>📅</span>
+                        <span>Submitted: {{ s.3 }}</span>
+                    </div>
+                </div>
+
+                {% if s.5 %}
+                    <span class="status-badge badge-late">
+                        <span>⏰</span>
+                        <span>Late</span>
+                    </span>
+                {% else %}
+                    <span class="status-badge badge-ontime">
+                        <span>✓</span>
+                        <span>On Time</span>
+                    </span>
+                {% endif %}
+            </div>
+
+            <a href="/media/{{ s.4 }}" target="_blank" class="btn-view">
+                <span>📄</span>
+                <span>View Submission</span>
+            </a>
+        </div>
+        {% endfor %}
+
+        <!-- Pending Students -->
+        {% for p in pending_students %}
+        <div class="submission-card" data-status="pending">
+            <div class="card-header">
+                <div class="student-info">
+                    <div>
+                        <span class="student-avatar">{{ p.1|slice:":1"|upper }}</span>
+                        <span class="student-name">{{ p.1 }}</span>
+                    </div>
+                    <div class="student-id">ID: {{ p.0 }}</div>
+                    <div class="submission-time">
+                        <span>⚠️</span>
+                        <span>Not Submitted Yet</span>
+                    </div>
+                </div>
+
+                <span class="status-badge badge-pending">
+                    <span>⏳</span>
+                    <span>Pending</span>
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if not submissions and not pending_students %}
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>No Students Found</h3>
+            <p>No students enrolled for this assignment.</p>
+        </div>
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Filter tabs
+const filterTabs = document.querySelectorAll('.filter-tab');
+const cards = document.querySelectorAll('.submission-card');
+const countNum = document.getElementById('totalCount');
+const totalStudents = {{ total_students|default:0 }};
+
+filterTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        // Update active tab
+        filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Filter cards
+        const filter = tab.dataset.filter;
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const status = card.dataset.status;
+            const isVisible = (filter === 'all') || (status === filter);
+            card.style.display = isVisible ? 'block' : 'none';
+            if (isVisible) visibleCount++;
+        });
+
+        // Update count
+        if (countNum) countNum.textContent = visibleCount;
+    });
+});
+</script>
+
+</body>
+</html>

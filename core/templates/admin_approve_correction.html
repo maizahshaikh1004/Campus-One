@@ -1,0 +1,20 @@
+<h2>Approve Attendance Correction</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <label>Correction Request ID:</label><br>
+    <input type="number" name="correction_id" required><br><br>
+
+    <label>Approve?</label><br>
+    <select name="approve">
+        <option value="1">Approve</option>
+        <option value="0">Reject</option>
+    </select><br><br>
+
+    <button type="submit">Submit</button>
+</form>
+
+{% if message %}
+<p>{{ message }}</p>
+{% endif %}

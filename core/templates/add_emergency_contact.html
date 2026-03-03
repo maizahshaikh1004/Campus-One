@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add Emergency Contact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg: #0a1a1f;
+    --glass: rgba(255,255,255,0.06);
+    --border: rgba(34,211,238,.25);
+    --cyan: #22d3ee;
+    --teal: #14b8a6;
+    --green: #22c55e;
+    --red: #ef4444;
+    --text: #fff;
+    --muted: #94a9b8;
+}
+
+* { margin:0; padding:0; box-sizing:border-box }
+
+body {
+    font-family: Outfit, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    padding: 3rem;
+}
+
+/* ---------- HEADER ---------- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.header h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+}
+
+.back {
+    color: var(--cyan);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+/* ---------- CARD ---------- */
+.card {
+    background: rgba(13,40,51,.6);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 2.5rem;
+}
+
+/* ---------- FORM ---------- */
+label {
+    font-size: .85rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+    margin: .4rem 0 1.5rem;
+    font-family: Outfit, sans-serif;
+}
+
+/* ---------- ACTIONS ---------- */
+.actions {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.save {
+    padding: 10px 24px;
+    border-radius: 20px;
+    border: none;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--cyan), var(--teal));
+    color: #000;
+    cursor: pointer;
+}
+
+.cancel {
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+/* ---------- MESSAGES ---------- */
+.error {
+    color: var(--red);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:600px){
+    .container {
+        padding: 2rem;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h2>🚨 Add Emergency Contact</h2>
+        <a href="{% url 'profile' %}" class="back">← Back</a>
+    </div>
+
+    <div class="card">
+
+        <!-- 🔔 Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <p class="error">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label>Name</label>
+            <input type="text" name="contact_name" required>
+
+            <label>Emergency Contact Number</label>
+            <input type="tel"
+                   name="contact_phone"
+                   required
+                   pattern="[0-9]{10}"
+                   maxlength="10"
+                   inputmode="numeric"
+                   title="Enter a valid 10-digit phone number">
+
+            <div class="actions">
+                <button type="submit" class="save">💾 Save Contact</button>
+                <a href="{% url 'profile' %}" class="cancel">Cancel</a>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

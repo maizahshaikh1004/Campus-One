@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk User Upload - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Page Header */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.page-header p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 0.4rem;
+}
+
+body.dark-mode .page-header p { color: #94a3b8; }
+
+/* Card */
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+body.dark-mode .card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.875rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+body.dark-mode .card-title {
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+}
+
+/* Upload Area */
+.upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2.5rem 1.5rem;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s;
+    background: #f8fafc;
+    position: relative;
+    text-align: center;
+}
+
+body.dark-mode .upload-area {
+    border-color: #475569;
+    background: #0f172a;
+}
+
+.upload-area:hover,
+.upload-area.dragover {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+body.dark-mode .upload-area:hover,
+body.dark-mode .upload-area.dragover {
+    border-color: #60a5fa;
+    background: #1e3a8a20;
+}
+
+.upload-area.has-file {
+    border-color: #22c55e;
+    background: #f0fdf4;
+    border-style: solid;
+}
+
+body.dark-mode .upload-area.has-file {
+    border-color: #16a34a;
+    background: #14532d20;
+}
+
+.upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.upload-icon {
+    width: 56px;
+    height: 56px;
+    background: #dbeafe;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    transition: all 0.25s;
+}
+
+body.dark-mode .upload-icon { background: #1e3a8a; }
+
+.upload-area.has-file .upload-icon {
+    background: #dcfce7;
+}
+
+body.dark-mode .upload-area.has-file .upload-icon { background: #14532d; }
+
+.upload-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+body.dark-mode .upload-text { color: #e2e8f0; }
+
+.upload-hint {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+body.dark-mode .upload-hint { color: #94a3b8; }
+
+.file-selected {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #166534;
+    display: none;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+body.dark-mode .file-selected { color: #86efac; }
+
+.upload-area.has-file .file-selected { display: flex; }
+.upload-area.has-file .upload-hint { display: none; }
+
+/* CSV Format hint */
+.format-hint {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-top: 1.25rem;
+}
+
+body.dark-mode .format-hint {
+    background: #0c4a6e30;
+    border-color: #0369a1;
+}
+
+.format-hint-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #0369a1;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+body.dark-mode .format-hint-title { color: #38bdf8; }
+
+.format-cols {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.col-tag {
+    background: white;
+    border: 1px solid #bae6fd;
+    color: #0369a1;
+    padding: 0.25rem 0.6rem;
+    border-radius: 5px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: monospace;
+}
+
+body.dark-mode .col-tag {
+    background: #0f172a;
+    border-color: #0369a1;
+    color: #38bdf8;
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 0.875rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.btn-submit:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+body.dark-mode .btn-submit { background: #60a5fa; color: #0f172a; }
+body.dark-mode .btn-submit:hover { background: #3b82f6; }
+
+/* Error box */
+.error-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+body.dark-mode .error-card { background: #1e293b; }
+
+.error-header {
+    background: #fef2f2;
+    border-bottom: 1px solid #fecaca;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .error-header {
+    background: #7f1d1d30;
+    border-bottom-color: #991b1b;
+}
+
+.error-header-icon {
+    width: 32px;
+    height: 32px;
+    background: #fee2e2;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+body.dark-mode .error-header-icon { background: #7f1d1d; }
+
+.error-header-text h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #991b1b;
+}
+
+body.dark-mode .error-header-text h3 { color: #fca5a5; }
+
+.error-header-text p {
+    font-size: 0.8rem;
+    color: #b91c1c;
+    margin-top: 0.1rem;
+}
+
+body.dark-mode .error-header-text p { color: #f87171; }
+
+.error-list {
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.error-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.6rem 0.75rem;
+    background: #fef2f2;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #991b1b;
+}
+
+body.dark-mode .error-item {
+    background: #7f1d1d20;
+    color: #fca5a5;
+}
+
+.error-item::before {
+    content: '⚠️';
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+}
+
+/* Success banner */
+.success-banner {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #166534;
+}
+
+body.dark-mode .success-banner {
+    background: #14532d30;
+    border-color: #16a34a;
+    color: #86efac;
+}
+
+@media (max-width: 600px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .format-cols { gap: 0.3rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="{% url 'admin_dashboard' %}" class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📤</span>
+            <span>Bulk User Upload</span>
+        </h1>
+        <p>Upload a CSV file to register multiple users at once</p>
+    </div>
+
+    <!-- Success message if applicable -->
+    {% if success_count %}
+    <div class="success-banner">
+        <span>✅</span>
+        <span>{{ success_count }} users uploaded successfully!</span>
+    </div>
+    {% endif %}
+
+    <!-- Error Card -->
+    {% if errors %}
+    <div class="error-card">
+        <div class="error-header">
+            <div class="error-header-icon">⚠️</div>
+            <div class="error-header-text">
+                <h3>{{ errors|length }} Record{{ errors|length|pluralize }} Skipped</h3>
+                <p>The following rows could not be processed</p>
+            </div>
+        </div>
+        <div class="error-list">
+            {% for e in errors %}
+            <div class="error-item">{{ e }}</div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Upload Card -->
+    <div class="card">
+        <div class="card-title">
+            <span>📁</span>
+            <span>Select CSV File</span>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" id="uploadForm">
+            {% csrf_token %}
+
+            <label class="upload-area" id="uploadArea">
+                <input type="file" name="file" id="fileInput" accept=".csv" required>
+                <div class="upload-icon" id="uploadIcon">📄</div>
+                <div class="upload-text" id="uploadText">Click to select a CSV file</div>
+                <div class="upload-hint">or drag and drop here · CSV format only</div>
+                <div class="file-selected" id="fileSelected">
+                    <span>✅</span>
+                    <span id="fileName">No file selected</span>
+                </div>
+            </label>
+
+            <!-- CSV Format Guide -->
+            <div class="format-hint">
+                <div class="format-hint-title">
+                    <span>ℹ️</span>
+                    <span>Required CSV columns</span>
+                </div>
+                <div class="format-cols">
+                    <span class="col-tag">name</span>
+                    <span class="col-tag">email</span>
+                    <span class="col-tag">role</span>
+                    <span class="col-tag">department_id</span>
+                    <span class="col-tag">class_id</span>
+                    <span class="col-tag">semester_id</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <span>📤</span>
+                <span>Upload Users</span>
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// File selection
+const fileInput   = document.getElementById('fileInput');
+const uploadArea  = document.getElementById('uploadArea');
+const uploadIcon  = document.getElementById('uploadIcon');
+const uploadText  = document.getElementById('uploadText');
+const fileNameEl  = document.getElementById('fileName');
+
+fileInput.addEventListener('change', function () {
+    if (this.files.length > 0) {
+        const name = this.files[0].name;
+        fileNameEl.textContent = name;
+        uploadArea.classList.add('has-file');
+        uploadIcon.textContent = '✅';
+        uploadText.textContent = 'File ready to upload';
+    }
+});
+
+// Drag and drop
+uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+});
+
+uploadArea.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('dragover');
+});
+
+uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.name.endsWith('.csv')) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        fileInput.files = dt.files;
+        fileNameEl.textContent = file.name;
+        uploadArea.classList.add('has-file');
+        uploadIcon.textContent = '✅';
+        uploadText.textContent = 'File ready to upload';
+    }
+});
+
+// Loading state on submit
+document.getElementById('uploadForm').addEventListener('submit', function () {
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = '<span>⏳</span><span>Uploading...</span>';
+    btn.disabled = true;
+    btn.style.opacity = '0.8';
+});
+</script>
+
+</body>
+</html>

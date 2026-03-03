@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faculty Dashboard - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-logo {
+    font-size: 1.75rem;
+    filter: drop-shadow(0 2px 4px rgba(37,99,235,0.3));
+}
+
+.nav-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+body.dark-mode .nav-title { color: #f1f5f9; }
+
+.nav-subtitle {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+body.dark-mode .nav-subtitle { color: #94a3b8; }
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #475569;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    position: relative;
+}
+
+body.dark-mode .nav-link { color: #94a3b8; }
+
+.nav-link:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+body.dark-mode .nav-link:hover {
+    background: #334155;
+    color: #f1f5f9;
+}
+
+.notif-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(239,68,68,0.3);
+}
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+
+/* Welcome Section */
+.welcome-section {
+    background: linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    color: white;
+    box-shadow: 0 4px 20px rgba(37,99,235,0.2);
+}
+
+.welcome-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-subtitle {
+    font-size: 0.95rem;
+    opacity: 0.95;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+body.dark-mode .stat-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    border-color: #2563eb;
+}
+
+body.dark-mode .stat-card:hover { border-color: #60a5fa; }
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.stat-icon.blue   { background: #dbeafe; }
+.stat-icon.purple { background: #ede9fe; }
+.stat-icon.green  { background: #dcfce7; }
+.stat-icon.amber  { background: #fef3c7; }
+
+body.dark-mode .stat-icon.blue   { background: #1e3a8a; }
+body.dark-mode .stat-icon.purple { background: #4c1d95; }
+body.dark-mode .stat-icon.green  { background: #14532d; }
+body.dark-mode .stat-icon.amber  { background: #78350f; }
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.25rem;
+}
+
+body.dark-mode .stat-value { color: #f1f5f9; }
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+body.dark-mode .stat-label { color: #94a3b8; }
+
+/* Section Header */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+body.dark-mode .section-title { color: #f1f5f9; }
+
+/* Quick Actions Grid */
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.action-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+}
+
+body.dark-mode .action-card {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.action-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border-color: #2563eb;
+}
+
+body.dark-mode .action-card:hover { border-color: #60a5fa; }
+
+.action-icon {
+    font-size: 2rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.action-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+body.dark-mode .action-label { color: #e2e8f0; }
+
+.action-badge {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: #ef4444;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Subjects Panel */
+.subjects-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 2.5rem;
+}
+
+body.dark-mode .subjects-panel {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.subject-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 3px solid #2563eb;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+body.dark-mode .subject-item {
+    background: #0f172a;
+    border-color: #334155;
+    border-left-color: #60a5fa;
+}
+
+.subject-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.subject-info { flex: 1; }
+
+.subject-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #0f172a;
+    margin-bottom: 0.25rem;
+}
+
+body.dark-mode .subject-name { color: #f1f5f9; }
+
+.subject-meta {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+body.dark-mode .subject-meta { color: #94a3b8; }
+
+/* Recent Sections */
+.recent-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.recent-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .recent-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.recent-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+body.dark-mode .recent-card-title {
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+}
+
+.recent-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+body.dark-mode .recent-item { border-bottom-color: #334155; }
+
+.recent-item:last-child { border-bottom: none; padding-bottom: 0; }
+.recent-item:first-child { padding-top: 0; }
+
+.recent-item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #dbeafe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+body.dark-mode .recent-item-icon { background: #1e3a8a; }
+
+.recent-item-content { flex: 1; }
+
+.recent-item-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #0f172a;
+    margin-bottom: 0.25rem;
+    text-decoration: none;
+    display: block;
+}
+
+body.dark-mode .recent-item-title { color: #f1f5f9; }
+
+.recent-item-title:hover { color: #2563eb; }
+body.dark-mode .recent-item-title:hover { color: #60a5fa; }
+
+.recent-item-date {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+body.dark-mode .recent-item-date { color: #94a3b8; }
+
+.recent-empty {
+    text-align: center;
+    padding: 2rem;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.view-all-link {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+body.dark-mode .view-all-link {
+    border-top-color: #334155;
+    color: #60a5fa;
+}
+
+.view-all-link:hover { text-decoration: underline; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .actions-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .nav-brand { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+    .nav-actions { gap: 0.5rem; }
+    .nav-link { padding: 0.4rem 0.75rem; font-size: 0.85rem; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .actions-grid { grid-template-columns: 1fr; }
+    .subjects-grid { grid-template-columns: 1fr; }
+    .recent-grid { grid-template-columns: 1fr; }
+    .welcome-title { font-size: 1.4rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <span class="nav-logo">🎓</span>
+            <div>
+                <div class="nav-title">CampusOne</div>
+                <div class="nav-subtitle">Faculty Portal</div>
+            </div>
+        </div>
+        <div class="nav-actions">
+            <a href="{% url 'notifications' %}" class="nav-link">
+                <span>🔔</span>
+                <span>Notifications</span>
+                {% if unread_count > 0 %}
+                <span class="notif-badge">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+            <a href="{% url 'profile' %}" class="nav-link">
+                <span>👤</span>
+                <span>Profile</span>
+            </a>
+            <a href="{% url 'logout' %}" class="nav-link">
+                <span>🚪</span>
+                <span>Logout</span>
+            </a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                <span id="themeIcon">🌙</span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <div class="welcome-title">👋 Welcome back, {{faculty_name}}!</div>
+        <div class="welcome-subtitle">Here's your overview for today</div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card" onclick="location.href='{% url 'faculty_assignments' %}'">
+            <div class="stat-icon blue">📝</div>
+            <div class="stat-value">{{ total_assignments }}</div>
+            <div class="stat-label">Assignments Created</div>
+        </div>
+
+        <div class="stat-card" onclick="location.href='{% url 'faculty_events_only' %}'">
+            <div class="stat-icon purple">🎉</div>
+            <div class="stat-value">{{ total_events }}</div>
+            <div class="stat-label">Events In-Charge</div>
+        </div>
+
+        <div class="stat-card" onclick="location.href='{% url 'faculty_notices' %}'">
+            <div class="stat-icon green">📢</div>
+            <div class="stat-value">{{ total_notices }}</div>
+            <div class="stat-label">Notices Posted</div>
+        </div>
+
+        <div class="stat-card" onclick="location.href='{% url 'faculty_pending_submissions' %}'">
+            <div class="stat-icon amber">📥</div>
+            <div class="stat-value">{{ pending_submissions }}</div>
+            <div class="stat-label">Pending Submissions</div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-header">
+        <h2 class="section-title">Quick Actions</h2>
+    </div>
+
+    <div class="actions-grid">
+        <a href="{% url 'create_assignment' %}" class="action-card">
+            <span class="action-icon">📝</span>
+            <span class="action-label">Create Assignment</span>
+        </a>
+
+        <a href="{% url 'create_notice' %}" class="action-card">
+            <span class="action-icon">📢</span>
+            <span class="action-label">Create Notice</span>
+        </a>
+
+        <a href="{% url 'create_event' %}" class="action-card">
+            <span class="action-icon">🎉</span>
+            <span class="action-label">Create Event</span>
+        </a>
+
+        <a href="{% url 'faculty_events' %}?mode=view_all" class="action-card">
+            <span class="action-icon">📅</span>
+            <span class="action-label">View All Events</span>
+        </a>
+
+        <a href="{% url 'mark_attendance' %}" class="action-card">
+            <span class="action-icon">✓</span>
+            <span class="action-label">Mark Attendance</span>
+        </a>
+
+        <a href="{% url 'faculty_view_attendance' %}" class="action-card">
+            <span class="action-icon">📊</span>
+            <span class="action-label">View Attendance</span>
+        </a>
+
+        <a href="{% url 'faculty_timetable' %}" class="action-card">
+            <span class="action-icon">🗓️</span>
+            <span class="action-label">My Timetable</span>
+        </a>
+
+        <a href="{% url 'request_attendance_correction' %}" class="action-card">
+            <span class="action-icon">🛠️</span>
+            <span class="action-label">Attendance Corrections</span>
+            {% if pending_corrections_count > 0 %}
+            <span class="action-badge">{{ pending_corrections_count }}</span>
+            {% endif %}
+        </a>
+
+        <a href="{% url 'faculty_attendance_report' %}" class="action-card">
+            <span class="action-icon">📈</span>
+            <span class="action-label">Attendance Report</span>
+        </a>
+    </div>
+
+    <!-- Subjects Panel -->
+    {% if subjects_handled %}
+    <div class="section-header">
+        <h2 class="section-title">My Subjects & Classes</h2>
+    </div>
+
+    <div class="subjects-panel">
+        <div class="subjects-grid">
+            {% for s in subjects_handled %}
+            <div class="subject-item">
+                <span class="subject-icon">📘</span>
+                <div class="subject-info">
+                    <div class="subject-name">{{ s.subject_name }}</div>
+                    <div class="subject-meta">
+                        {{ s.department_name }} · Sem {{ s.semester_number }} · {{ s.class_name }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Activity -->
+    <div class="section-header">
+        <h2 class="section-title">Recent Activity</h2>
+    </div>
+
+    <div class="recent-grid">
+        <!-- Recent Assignments -->
+        <div class="recent-card">
+            <h3 class="recent-card-title">Recent Assignments</h3>
+
+            {% if recent_assignments %}
+                {% for a in recent_assignments|slice:":4" %}
+                <div class="recent-item">
+                    <div class="recent-item-icon">📝</div>
+                    <div class="recent-item-content">
+                        <div class="recent-item-title">{{ a.1 }}</div>
+                        <div class="recent-item-date">Due: {{ a.2 }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <a href="{% url 'faculty_assignments' %}" class="view-all-link">
+                    View all assignments →
+                </a>
+            {% else %}
+                <div class="recent-empty">No assignments yet</div>
+            {% endif %}
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="recent-card">
+            <h3 class="recent-card-title">Upcoming Events</h3>
+
+            {% if upcoming_events %}
+                {% for e in upcoming_events|slice:":4" %}
+                <div class="recent-item">
+                    <div class="recent-item-icon">🎯</div>
+                    <div class="recent-item-content">
+                        <a href="{% url 'event_detail' e.0 %}" class="recent-item-title">{{ e.1 }}</a>
+                        <div class="recent-item-date">{{ e.2 }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <a href="{% url 'faculty_events' %}" class="view-all-link">
+                    View all events →
+                </a>
+            {% else %}
+                <div class="recent-empty">No upcoming events</div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+</script>
+
+</body>
+</html>

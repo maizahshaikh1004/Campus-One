@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusOne - Campus Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    line-height: 1.6;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Scroll animations */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fade-in-left {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.fade-in-right {
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scale-in {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.scale-in.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Stagger animation for grid items */
+.feature-card {
+    transition-delay: calc(var(--index) * 0.1s);
+}
+
+.stat-item {
+    transition-delay: calc(var(--index) * 0.1s);
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+body.dark-mode .navbar {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .logo {
+    color: #60a5fa;
+}
+
+body.dark-mode .btn-secondary {
+    color: #cbd5e1;
+    background: #334155;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #475569;
+}
+
+body.dark-mode .hero {
+    background: #1e293b;
+}
+
+body.dark-mode .hero h1 {
+    color: #f1f5f9;
+}
+
+body.dark-mode .hero .brand {
+    color: #60a5fa;
+}
+
+body.dark-mode .hero p {
+    color: #94a3b8;
+}
+
+body.dark-mode .features {
+    background: #0f172a;
+}
+
+body.dark-mode .section-header h2 {
+    color: #f1f5f9;
+}
+
+body.dark-mode .section-header p {
+    color: #94a3b8;
+}
+
+body.dark-mode .feature-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .feature-card:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+body.dark-mode .feature-card h3 {
+    color: #f1f5f9;
+}
+
+body.dark-mode .feature-card p {
+    color: #94a3b8;
+}
+
+body.dark-mode .info-section {
+    background: #1e293b;
+}
+
+body.dark-mode .info-content h2 {
+    color: #f1f5f9;
+}
+
+body.dark-mode .info-content p {
+    color: #94a3b8;
+}
+
+body.dark-mode .info-list li {
+    color: #cbd5e1;
+}
+
+body.dark-mode .info-list li::before {
+    color: #60a5fa;
+}
+
+body.dark-mode .info-visual {
+    background: #334155;
+}
+
+body.dark-mode .placeholder-graphic {
+    color: #64748b;
+}
+
+body.dark-mode .stats {
+    background: #1e40af;
+}
+
+body.dark-mode .footer {
+    background: #1e293b;
+    border-top: 1px solid #334155;
+}
+
+body.dark-mode .footer-brand {
+    color: #60a5fa;
+}
+
+body.dark-mode .footer-text {
+    color: #94a3b8;
+}
+
+/* Navigation */
+.navbar {
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+    background: #e2e8f0;
+    transform: scale(1.05);
+}
+
+body.dark-mode .theme-toggle {
+    background: #334155;
+}
+
+body.dark-mode .theme-toggle:hover {
+    background: #475569;
+}
+
+.btn {
+    padding: 0.625rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    display: inline-block;
+}
+
+.btn-secondary {
+    color: #475569;
+    background: #f1f5f9;
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+/* Hero Section */
+.hero {
+    padding: 8rem 2rem 6rem;
+    text-align: center;
+    background: white;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.hero .brand {
+    color: #2563eb;
+}
+
+.hero p {
+    font-size: 1.25rem;
+    color: #64748b;
+    margin-bottom: 2.5rem;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-large {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+}
+
+/* Features Section */
+.features {
+    padding: 5rem 2rem;
+    background: #f8f9fa;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-header h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.75rem;
+}
+
+.section-header p {
+    font-size: 1.1rem;
+    color: #64748b;
+}
+
+.features-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.feature-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.3s;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 0.75rem;
+}
+
+.feature-card p {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Info Section */
+.info-section {
+    padding: 5rem 2rem;
+    background: white;
+}
+
+.info-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.info-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1.25rem;
+}
+
+.info-content p {
+    color: #64748b;
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+}
+
+.info-list {
+    list-style: none;
+    margin-bottom: 2rem;
+}
+
+.info-list li {
+    padding: 0.75rem 0;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.info-list li::before {
+    content: "✓";
+    color: #2563eb;
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+.info-visual {
+    background: #f1f5f9;
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    position: relative;
+}
+
+/* Dashboard Carousel */
+.dashboard-carousel {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.carousel-slides {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.carousel-slide {
+    display: none;
+    width: 100%;
+    animation: fadeSlide 0.5s ease;
+}
+
+.carousel-slide.active {
+    display: block;
+}
+
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.dashboard-screenshot {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+}
+
+.carousel-caption {
+    background: linear-gradient(135deg, #2563eb, #8b5cf6);
+    color: white;
+    text-align: center;
+    padding: 0.75rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.carousel-btn:hover {
+    background: white;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.carousel-btn.prev {
+    left: -20px;
+}
+
+.carousel-btn.next {
+    right: -20px;
+}
+
+body.dark-mode .carousel-btn {
+    background: rgba(30, 41, 59, 0.9);
+    color: #e2e8f0;
+}
+
+body.dark-mode .carousel-btn:hover {
+    background: #1e293b;
+}
+
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #cbd5e1;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+}
+
+.indicator:hover {
+    transform: scale(1.2);
+}
+
+.indicator.active {
+    background: #2563eb;
+    border-color: #2563eb;
+    width: 28px;
+    border-radius: 5px;
+}
+
+body.dark-mode .indicator {
+    border-color: #475569;
+}
+
+body.dark-mode .indicator.active {
+    background: #60a5fa;
+    border-color: #60a5fa;
+}
+
+/* Stats Section */
+.stats {
+    padding: 4rem 2rem;
+    background: #2563eb;
+    color: white;
+}
+
+.stats-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 3rem;
+    text-align: center;
+}
+
+.stat-item h3 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-item p {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* Footer */
+.footer {
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    padding: 3rem 2rem;
+}
+
+.footer-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.footer-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 1rem;
+}
+
+.footer-text {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero p {
+        font-size: 1.1rem;
+    }
+    
+    .info-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-header h2 {
+        font-size: 1.75rem;
+    }
+    
+    .nav-container {
+        padding: 1rem;
+    }
+    
+    .hero {
+        padding: 6rem 1rem 4rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+<body>
+{% load static %}
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">CampusOne</div>
+        <div class="nav-buttons">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                <span id="themeIcon">🌙</span>
+            </button>
+            <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
+            <a href="{% url 'register' %}" class="btn btn-primary">Get Started</a>
+        </div>
+    </div>
+</nav>
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="fade-in">Modern Campus Management</h1>
+        <p class="fade-in">A comprehensive platform designed to streamline academic operations, enhance student engagement, and simplify administrative workflows.</p>
+        <div class="hero-buttons fade-in">
+            <a href="{% url 'register' %}" class="btn btn-primary btn-large">Create Account</a>
+            <a href="{% url 'login' %}" class="btn btn-secondary btn-large">Sign In</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="section-header fade-in">
+        <h2>Everything You Need</h2>
+        <p>Comprehensive tools for modern campus management</p>
+    </div>
+    
+    <div class="features-grid">
+        <div class="feature-card fade-in" style="--index: 0;">
+            <div class="feature-icon">📊</div>
+            <h3>Attendance Tracking</h3>
+            <p>Real-time attendance marking with correction requests, shortage analytics, and automated notifications.</p>
+        </div>
+        
+        <div class="feature-card fade-in" style="--index: 1;">
+            <div class="feature-icon">📘</div>
+            <h3>Assignment Management</h3>
+            <p>Track deadlines, manage submissions, and send automatic reminders to keep everyone on schedule.</p>
+        </div>
+        
+        <div class="feature-card fade-in" style="--index: 2;">
+            <div class="feature-icon">🎉</div>
+            <h3>Event Coordination</h3>
+            <p>Organize campus events with coordinator assignments, lifecycle tracking, and engagement monitoring.</p>
+        </div>
+        
+        <div class="feature-card fade-in" style="--index: 3;">
+            <div class="feature-icon">📢</div>
+            <h3>Notice Board</h3>
+            <p>Broadcast announcements with department and semester targeting for precise communication.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Info Section -->
+<section class="info-section">
+    <div class="info-container">
+        <div class="info-content fade-in-left">
+            <h2>Built for Academic Excellence</h2>
+            <p>CampusOne brings together students, faculty, and administrators on a unified platform designed specifically for educational institutions.</p>
+            
+            <ul class="info-list">
+                <li>Automated attendance and assignment workflows</li>
+                <li>Real-time notifications and updates</li>
+                <li>Comprehensive analytics and reporting</li>
+                <li>Role-based access control</li>
+                <li>Mobile-friendly interface</li>
+            </ul>
+            
+            <a href="{% url 'register' %}" class="btn btn-primary">Get Started Today</a>
+        </div>
+        
+        <div class="info-visual fade-in-right">
+            <div class="dashboard-carousel">
+                <div class="carousel-slides">
+                    <div class="carousel-slide active">
+                        <img src="https://i.ibb.co/VYJYDVkr/student-dashboard.png" alt="Student Dashboard" class="dashboard-screenshot">
+                        <div class="carousel-caption">Student Portal</div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="https://i.ibb.co/jv6jk7B2/admin-dashboard.png" alt="Admin Dashboard" class="dashboard-screenshot">
+                        <div class="carousel-caption">Admin Dashboard</div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="https://i.ibb.co/prM4KSZ2/faculty-dashboard.png" alt="Faculty Dashboard" class="dashboard-screenshot">
+                        <div class="carousel-caption">Faculty Portal</div>
+                    </div>
+                </div>
+                <button class="carousel-btn prev" aria-label="Previous">❮</button>
+                <button class="carousel-btn next" aria-label="Next">❯</button>
+                <div class="carousel-indicators">
+                    <button class="indicator active" data-slide="0"></button>
+                    <button class="indicator" data-slide="1"></button>
+                    <button class="indicator" data-slide="2"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats">
+    <div class="stats-container">
+        <div class="stat-item scale-in" style="--index: 0;">
+            <h3>100%</h3>
+            <p>Cloud-Based</p>
+        </div>
+        <div class="stat-item scale-in" style="--index: 1;">
+            <h3>24/7</h3>
+            <p>System Availability</p>
+        </div>
+        <div class="stat-item scale-in" style="--index: 2;">
+            <h3>Secure</h3>
+            <p>Data Protection</p>
+        </div>
+        <div class="stat-item scale-in" style="--index: 3;">
+            <h3>Fast</h3>
+            <p>Real-Time Updates</p>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-brand">CampusOne</div>
+        <p class="footer-text">© 2026 CampusOne. A modern campus management system built for students, faculty, and administrators.</p>
+    </div>
+</footer>
+
+<script>
+// Dark mode toggle functionality
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const body = document.body;
+
+// Check for saved theme preference or default to light mode
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+// Toggle theme on button click
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    
+    // Update icon and save preference
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Scroll animations
+const observerOptions = {
+    threshold: 0.15,
+    rootMargin: '0px 0px -100px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        } else {
+            entry.target.classList.remove('visible');
+        }
+    });
+}, observerOptions);
+
+// Observe all elements with animation classes
+document.addEventListener('DOMContentLoaded', () => {
+    const animatedElements = document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .scale-in');
+    animatedElements.forEach(el => observer.observe(el));
+    
+    // Initialize carousel
+    initCarousel();
+});
+
+// Dashboard Carousel
+function initCarousel() {
+    const slides = document.querySelectorAll('.carousel-slide');
+    const indicators = document.querySelectorAll('.indicator');
+    const prevBtn = document.querySelector('.carousel-btn.prev');
+    const nextBtn = document.querySelector('.carousel-btn.next');
+    let currentSlide = 0;
+    let autoplayInterval;
+
+    function showSlide(index) {
+        slides.forEach(slide => slide.classList.remove('active'));
+        indicators.forEach(ind => ind.classList.remove('active'));
+        
+        if (index >= slides.length) currentSlide = 0;
+        if (index < 0) currentSlide = slides.length - 1;
+        
+        slides[currentSlide].classList.add('active');
+        indicators[currentSlide].classList.add('active');
+    }
+
+    function nextSlide() {
+        currentSlide++;
+        if (currentSlide >= slides.length) currentSlide = 0;
+        showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+        currentSlide--;
+        if (currentSlide < 0) currentSlide = slides.length - 1;
+        showSlide(currentSlide);
+    }
+
+    // Button controls
+    nextBtn.addEventListener('click', () => {
+        nextSlide();
+        resetAutoplay();
+    });
+
+    prevBtn.addEventListener('click', () => {
+        prevSlide();
+        resetAutoplay();
+    });
+
+    // Indicator controls
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+            currentSlide = index;
+            showSlide(currentSlide);
+            resetAutoplay();
+        });
+    });
+
+    // Autoplay
+    function startAutoplay() {
+        autoplayInterval = setInterval(nextSlide, 4000);
+    }
+
+    function resetAutoplay() {
+        clearInterval(autoplayInterval);
+        startAutoplay();
+    }
+
+    // Start autoplay
+    startAutoplay();
+
+    // Pause on hover
+    const carousel = document.querySelector('.dashboard-carousel');
+    carousel.addEventListener('mouseenter', () => {
+        clearInterval(autoplayInterval);
+    });
+    carousel.addEventListener('mouseleave', () => {
+        startAutoplay();
+    });
+}
+</script>
+
+</body>
+</html>

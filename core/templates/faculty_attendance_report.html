@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance Report - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.count-badge {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+body.dark-mode .count-badge { background: #1e3a8a; color: #bfdbfe; }
+
+/* Summary Cards */
+.summary-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+}
+
+body.dark-mode .summary-card { background: #1e293b; }
+
+.summary-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.summary-icon.good     { background: #dcfce7; }
+.summary-icon.warning  { background: #fef3c7; }
+.summary-icon.critical { background: #fee2e2; }
+
+body.dark-mode .summary-icon.good     { background: #14532d; }
+body.dark-mode .summary-icon.warning  { background: #78350f; }
+body.dark-mode .summary-icon.critical { background: #7f1d1d; }
+
+.summary-num {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1;
+}
+
+body.dark-mode .summary-num { color: #f1f5f9; }
+
+.summary-label {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 0.2rem;
+    font-weight: 500;
+}
+
+body.dark-mode .summary-label { color: #94a3b8; }
+
+/* Filter Panel */
+.filter-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+body.dark-mode .filter-panel { background: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+.filter-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+body.dark-mode .filter-label { color: #94a3b8; }
+
+.filter-tabs {
+    display: flex;
+    gap: 0.4rem;
+    background: #f1f5f9;
+    padding: 0.3rem;
+    border-radius: 8px;
+}
+
+body.dark-mode .filter-tabs { background: #334155; }
+
+.filter-tab {
+    padding: 0.4rem 0.875rem;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+body.dark-mode .filter-tab { color: #94a3b8; }
+
+.filter-tab:hover { color: #475569; }
+body.dark-mode .filter-tab:hover { color: #cbd5e1; }
+
+.filter-tab.active {
+    background: white;
+    color: #2563eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .filter-tab.active { background: #1e293b; color: #60a5fa; }
+
+/* Attendance Cards */
+.attendance-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.25rem;
+}
+
+.attendance-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+body.dark-mode .attendance-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.attendance-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border-color: #e2e8f0;
+}
+
+body.dark-mode .attendance-card:hover { border-color: #334155; }
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 0.75rem;
+}
+
+.student-info { flex: 1; }
+
+.student-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #0f172a;
+    margin-bottom: 0.3rem;
+}
+
+body.dark-mode .student-name { color: #f1f5f9; }
+
+.student-meta {
+    font-size: 0.8rem;
+    color: #64748b;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+body.dark-mode .student-meta { color: #94a3b8; }
+
+/* Status Badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.badge-good { background: #dcfce7; color: #166534; }
+body.dark-mode .badge-good { background: #14532d; color: #86efac; }
+
+.badge-warning { background: #fef3c7; color: #92400e; }
+body.dark-mode .badge-warning { background: #78350f; color: #fde68a; }
+
+.badge-critical { background: #fee2e2; color: #991b1b; }
+body.dark-mode .badge-critical { background: #7f1d1d; color: #fca5a5; }
+
+/* Progress Bar */
+.progress-section {
+    margin-top: 1rem;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.progress-percentage {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #0f172a;
+}
+
+body.dark-mode .progress-percentage { color: #f1f5f9; }
+
+.progress-bar-container {
+    height: 10px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+body.dark-mode .progress-bar-container { background: #334155; }
+
+.progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.progress-good     { background: #22c55e; }
+.progress-warning  { background: #f59e0b; }
+.progress-critical { background: #ef4444; }
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #94a3b8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .summary-row { grid-template-columns: 1fr; }
+    .attendance-list { grid-template-columns: 1fr; }
+    .filter-panel { flex-direction: column; align-items: flex-start; gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="{% url 'faculty_dashboard' %}" class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📊</span>
+            <span>Attendance Report</span>
+        </h1>
+        <div class="count-badge" id="countBadge">{{ report|length }} Students</div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-row">
+        <div class="summary-card">
+            <div class="summary-icon good">✓</div>
+            <div>
+                <div class="summary-num" id="goodCount">0</div>
+                <div class="summary-label">Good (≥75%)</div>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-icon warning">⚠️</div>
+            <div>
+                <div class="summary-num" id="warningCount">0</div>
+                <div class="summary-label">Warning (60-74%)</div>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-icon critical">🔴</div>
+            <div>
+                <div class="summary-num" id="criticalCount">0</div>
+                <div class="summary-label">Critical (<60%)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Panel -->
+    <div class="filter-panel">
+        <div class="filter-label">Filter by Status</div>
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">All</button>
+            <button class="filter-tab" data-filter="good">✓ Good</button>
+            <button class="filter-tab" data-filter="warning">⚠️ Warning</button>
+            <button class="filter-tab" data-filter="critical">🔴 Critical</button>
+        </div>
+    </div>
+
+    <!-- Attendance Cards -->
+    <div class="attendance-list">
+        {% for r in report %}
+        <div class="attendance-card" data-percentage="{{ r.4 }}">
+            <div class="card-header">
+                <div class="student-info">
+                    <div class="student-name">{{ r.1 }}</div>
+                    <div class="student-meta">
+                        <span>{{ r.2 }}</span>
+                        <span>{{ r.3 }}</span>
+                    </div>
+                </div>
+
+                {% if r.4 >= 75 %}
+                    <span class="status-badge badge-good">
+                        <span>✓</span>
+                        <span>Good</span>
+                    </span>
+                {% elif r.4 >= 60 %}
+                    <span class="status-badge badge-warning">
+                        <span>⚠️</span>
+                        <span>Warning</span>
+                    </span>
+                {% else %}
+                    <span class="status-badge badge-critical">
+                        <span>🔴</span>
+                        <span>Critical</span>
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-label">
+                    <span class="progress-percentage">{{ r.4 }}%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar {% if r.4 >= 75 %}progress-good{% elif r.4 >= 50 %}progress-warning{% else %}progress-critical{% endif %}"
+                         style="width: {{ r.4 }}%">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Calculate summary stats
+const cards = document.querySelectorAll('.attendance-card');
+let goodCount = 0;
+let warningCount = 0;
+let criticalCount = 0;
+
+cards.forEach(card => {
+    const percent = parseFloat(card.dataset.percentage);
+    if (percent >= 75) goodCount++;
+    else if (percent >= 50) warningCount++;
+    else criticalCount++;
+});
+
+document.getElementById('goodCount').textContent = goodCount;
+document.getElementById('warningCount').textContent = warningCount;
+document.getElementById('criticalCount').textContent = criticalCount;
+
+// Filter functionality
+const filterTabs = document.querySelectorAll('.filter-tab');
+const countBadge = document.getElementById('countBadge');
+const totalStudents = cards.length;
+
+filterTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        // Update active tab
+        filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Filter cards
+        const filter = tab.dataset.filter;
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const percent = parseFloat(card.dataset.percentage);
+            let show = false;
+
+            if (filter === 'all') show = true;
+            else if (filter === 'good' && percent >= 75) show = true;
+            else if (filter === 'warning' && percent >= 60 && percent < 75) show = true;
+            else if (filter === 'critical' && percent < 60) show = true;
+
+            card.style.display = show ? 'block' : 'none';
+            if (show) visibleCount++;
+        });
+
+        // Update count badge
+        if (visibleCount === totalStudents) {
+            countBadge.textContent = `${totalStudents} Students`;
+        } else {
+            countBadge.textContent = `${visibleCount} of ${totalStudents} Students`;
+        }
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit Assignment - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: rotate(15deg); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 900px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+/* Page Header */
+.page-header {
+    margin-bottom: 2.5rem;
+    animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.page-header p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+body.dark-mode .page-header p { color: #94a3b8; }
+
+/* Alert Banners */
+.alert {
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.alert-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.95rem;
+}
+
+.alert-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.alert-warning {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+}
+
+body.dark-mode .alert-warning {
+    background: #78350f30;
+    border-color: #92400e;
+}
+
+.alert-warning .alert-icon { background: #fef3c7; }
+body.dark-mode .alert-warning .alert-icon { background: #78350f; }
+
+.alert-warning .alert-text { color: #92400e; }
+body.dark-mode .alert-warning .alert-text { color: #fde68a; }
+
+.alert-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+}
+
+body.dark-mode .alert-error {
+    background: #7f1d1d30;
+    border-color: #991b1b;
+}
+
+.alert-error .alert-icon { background: #fee2e2; }
+body.dark-mode .alert-error .alert-icon { background: #7f1d1d; }
+
+.alert-error .alert-text { color: #991b1b; }
+body.dark-mode .alert-error .alert-text { color: #fca5a5; }
+
+/* Info Card */
+.info-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+    animation: fadeIn 0.5s ease;
+}
+
+body.dark-mode .info-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.info-header {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+body.dark-mode .info-header {
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.info-item {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid #e2e8f0;
+}
+
+body.dark-mode .info-item {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+body.dark-mode .info-label { color: #94a3b8; }
+
+.info-value {
+    font-size: 0.95rem;
+    color: #0f172a;
+    font-weight: 500;
+}
+
+body.dark-mode .info-value { color: #f1f5f9; }
+
+.info-item.full-width { grid-column: span 2; }
+
+/* Upload Section */
+.upload-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+body.dark-mode .upload-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.upload-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+body.dark-mode .upload-label { color: #f1f5f9; }
+
+.file-upload-area {
+    position: relative;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    background: #f8fafc;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+}
+
+body.dark-mode .file-upload-area {
+    background: #0f172a;
+    border-color: #475569;
+}
+
+.file-upload-area:hover {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+body.dark-mode .file-upload-area:hover {
+    border-color: #60a5fa;
+    background: #1e3a8a30;
+}
+
+.file-upload-area.has-file {
+    border-color: #2563eb;
+    background: #eff6ff;
+    border-style: solid;
+}
+
+body.dark-mode .file-upload-area.has-file {
+    border-color: #60a5fa;
+    background: #1e3a8a30;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.upload-text {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+
+body.dark-mode .upload-text { color: #94a3b8; }
+
+.upload-hint {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.file-name {
+    font-weight: 600;
+    color: #2563eb;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .file-name { color: #60a5fa; }
+
+input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #2563eb, #8b5cf6);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(37,99,235,0.3);
+}
+
+.btn-submit:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
+}
+
+body.dark-mode .btn-submit:disabled { background: #475569; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .info-grid { grid-template-columns: 1fr; }
+    .info-item.full-width { grid-column: span 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="{% url 'student_assignments' %}" class="back-link">
+            <span>←</span>
+            <span>Back to Assignments</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<!-- Main -->
+<main class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📤</span>
+            <span>Submit Assignment</span>
+        </h1>
+        <p>Upload your completed assignment file</p>
+    </div>
+
+    <!-- Alert Messages -->
+    {% if message %}
+    <div class="alert alert-error">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-text">{{ message }}</div>
+    </div>
+    {% endif %}
+
+    {% if is_overdue %}
+    <div class="alert alert-warning">
+        <div class="alert-icon">⏰</div>
+        <div class="alert-text">You are submitting this assignment past the due date</div>
+    </div>
+    {% endif %}
+
+    <!-- Assignment Info -->
+    <div class="info-card">
+        <div class="info-header">Assignment Details</div>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Subject</div>
+                <div class="info-value">{{ assignment.1 }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Due Date</div>
+                <div class="info-value">{{ assignment.4 }}</div>
+            </div>
+            <div class="info-item full-width">
+                <div class="info-label">Title</div>
+                <div class="info-value">{{ assignment.2 }}</div>
+            </div>
+            <div class="info-item full-width">
+                <div class="info-label">Description</div>
+                <div class="info-value">{{ assignment.3 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Form -->
+    <form method="post" enctype="multipart/form-data" id="uploadForm">
+        {% csrf_token %}
+
+        <div class="upload-card">
+            <label class="upload-label" for="submission_file">Upload Your Submission</label>
+            
+            <label for="submission_file" class="file-upload-area" id="fileUploadArea">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Click to upload or drag and drop</div>
+                <div class="upload-hint">Accepted formats: PDF, DOC, DOCX (max 10MB)</div>
+                <div class="file-name" id="fileName" style="display:none;"></div>
+            </label>
+            
+            <input type="file" name="submission_file" id="submission_file" accept=".pdf,.doc,.docx" required>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+            <span>📤</span>
+            <span>Submit Assignment</span>
+        </button>
+    </form>
+
+</main>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const body = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// File upload
+const fileInput = document.getElementById('submission_file');
+const fileUploadArea = document.getElementById('fileUploadArea');
+const fileName = document.getElementById('fileName');
+const submitBtn = document.getElementById('submitBtn');
+
+fileInput.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+        const file = this.files[0];
+        fileName.textContent = `📎 ${file.name}`;
+        fileName.style.display = 'block';
+        fileUploadArea.classList.add('has-file');
+    } else {
+        fileName.style.display = 'none';
+        fileUploadArea.classList.remove('has-file');
+    }
+});
+
+// Form submission
+const uploadForm = document.getElementById('uploadForm');
+uploadForm.addEventListener('submit', function() {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span>⏳</span><span>Submitting...</span>';
+});
+</script>
+
+</body>
+</html>

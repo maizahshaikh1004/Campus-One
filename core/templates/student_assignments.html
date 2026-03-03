@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Assignments - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: rotate(15deg); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.count-badge {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+body.dark-mode .count-badge { background: #1e3a8a; color: #bfdbfe; }
+
+/* Filter Panel */
+.filter-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: fadeIn 0.5s ease;
+}
+
+body.dark-mode .filter-panel { background: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.filter-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+body.dark-mode .filter-label { color: #94a3b8; }
+
+.filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    background: #f1f5f9;
+    padding: 0.3rem;
+    border-radius: 8px;
+}
+
+body.dark-mode .filter-tabs { background: #334155; }
+
+.filter-tab {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+body.dark-mode .filter-tab { color: #94a3b8; }
+
+.filter-tab:hover { color: #475569; }
+body.dark-mode .filter-tab:hover { color: #cbd5e1; }
+
+.filter-tab.active {
+    background: white;
+    color: #2563eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .filter-tab.active { background: #1e293b; color: #60a5fa; }
+
+/* Assignments Grid */
+.assignments-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.assignment-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.5s ease backwards;
+}
+
+body.dark-mode .assignment-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.assignment-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    transition: width 0.3s;
+    pointer-events: none;
+}
+
+.assignment-card.open::before { background: #22c55e; }
+.assignment-card.late::before { background: #ef4444; }
+.assignment-card.submitted::before { background: #6366f1; }
+
+.assignment-card:hover::before { width: 100%; opacity: 0.05; }
+
+.assignment-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    border-color: #e2e8f0;
+}
+
+body.dark-mode .assignment-card:hover {
+    border-color: #334155;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.5);
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.assignment-card:nth-child(1) { animation-delay: 0.1s; }
+.assignment-card:nth-child(2) { animation-delay: 0.15s; }
+.assignment-card:nth-child(3) { animation-delay: 0.2s; }
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.assignment-info { flex: 1; }
+
+.assignment-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+}
+
+body.dark-mode .assignment-title { color: #f1f5f9; }
+
+.assignment-meta {
+    font-size: 0.85rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+body.dark-mode .assignment-meta { color: #94a3b8; }
+
+.meta-divider {
+    width: 3px;
+    height: 3px;
+    background: #cbd5e1;
+    border-radius: 50%;
+}
+
+body.dark-mode .meta-divider { background: #475569; }
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-open { background: #dcfce7; color: #166534; }
+body.dark-mode .badge-open { background: #14532d; color: #86efac; }
+
+.badge-late { background: #fee2e2; color: #991b1b; }
+body.dark-mode .badge-late { background: #7f1d1d; color: #fca5a5; }
+
+.badge-submitted { background: #e0e7ff; color: #4338ca; }
+body.dark-mode .badge-submitted { background: #4338ca; color: #e0e7ff; }
+
+.assignment-description {
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .assignment-description { color: #cbd5e1; }
+
+.deadline-section {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+body.dark-mode .deadline-section { background: #0f172a; }
+
+.deadline-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.deadline-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+body.dark-mode .deadline-label { color: #94a3b8; }
+
+.deadline-date {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+body.dark-mode .deadline-date { color: #f1f5f9; }
+
+.countdown {
+    font-size: 0.85rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+body.dark-mode .countdown { color: #94a3b8; }
+
+.countdown.urgent { color: #ef4444; font-weight: 600; }
+body.dark-mode .countdown.urgent { color: #f87171; }
+
+.assignment-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.btn {
+    padding: 0.65rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, #2563eb, #8b5cf6);
+    color: white;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+.btn-secondary {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+body.dark-mode .btn-secondary {
+    background: #334155;
+    color: #cbd5e1;
+}
+
+.btn-secondary:hover { background: #e2e8f0; }
+body.dark-mode .btn-secondary:hover { background: #475569; }
+
+.submitted-text {
+    color: #6366f1;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+body.dark-mode .submitted-text { color: #a5b4fc; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .filter-panel {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .card-header { flex-direction: column; }
+    .assignment-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    .btn { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="{% url 'student_dashboard' %}" class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<!-- Main -->
+<main class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📘</span>
+            <span>My Assignments</span>
+        </h1>
+        <div class="count-badge" id="countBadge">{{ assignments|length }} Total</div>
+    </div>
+
+    <!-- Filter Panel -->
+    <div class="filter-panel">
+        <div class="filter-label">Filter by Status</div>
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">All</button>
+            <button class="filter-tab" data-filter="open">Open</button>
+            <button class="filter-tab" data-filter="late">Late</button>
+            <button class="filter-tab" data-filter="submitted">Submitted</button>
+        </div>
+    </div>
+
+    <!-- Assignments Grid -->
+    <div class="assignments-grid">
+        {% for a in assignments %}
+        <div class="assignment-card {% if a.7 %}submitted{% elif a.4 < today %}late{% else %}open{% endif %}"
+             data-status="{% if a.7 %}submitted{% elif a.4 < today %}late{% else %}open{% endif %}">
+            
+            <div class="card-header">
+                <div class="assignment-info">
+                    <div class="assignment-title">{{ a.2 }}</div>
+                    <div class="assignment-meta">
+                        <span>{{ a.1 }}</span>
+                        <span class="meta-divider"></span>
+                        <span>{{ a.5 }}</span>
+                    </div>
+                </div>
+
+                {% if a.7 %}
+                    <span class="status-badge badge-submitted">✓ Submitted</span>
+                {% elif a.4 < today %}
+                    <span class="status-badge badge-late">⏰ Late</span>
+                {% else %}
+                    <span class="status-badge badge-open">📝 Open</span>
+                {% endif %}
+            </div>
+
+            <p class="assignment-description">{{ a.3 }}</p>
+
+            <div class="deadline-section">
+                <div class="deadline-info">
+                    <div class="deadline-label">Due Date</div>
+                    <div class="deadline-date">📅 {{ a.4 }}</div>
+                </div>
+                {% if not a.7 %}
+                <div class="countdown" data-due="{{ a.4|date:'Y-m-d' }}">
+                    Calculating…
+                </div>
+                {% else %}
+                <div class="countdown">
+                    <span>✓</span>
+                    <span>Completed</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="assignment-actions">
+                {% if not a.7 %}
+                    <a href="{% url 'submit_assignment' a.0 %}" class="btn btn-submit">
+                        <span>📤</span>
+                        <span>Submit Assignment</span>
+                    </a>
+                {% else %}
+                    <div class="submitted-text">
+                        <span>✓</span>
+                        <span>Submission Received</span>
+                    </div>
+                {% endif %}
+
+                {% if a.6 %}
+                    <a href="{{ MEDIA_URL }}{{ a.6 }}" target="_blank" class="btn btn-secondary">
+                        <span>📎</span>
+                        <span>Question Paper</span>
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+</main>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const body = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Filter functionality
+const filterTabs = document.querySelectorAll('.filter-tab');
+const assignments = document.querySelectorAll('.assignment-card');
+const countBadge = document.getElementById('countBadge');
+const totalAssignments = assignments.length;
+
+filterTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        // Update active tab
+        filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Filter assignments
+        const filter = tab.dataset.filter;
+        let visibleCount = 0;
+
+        assignments.forEach(card => {
+            const status = card.dataset.status;
+            const isVisible = filter === 'all' || status === filter;
+            card.style.display = isVisible ? 'block' : 'none';
+            if (isVisible) visibleCount++;
+        });
+
+        // Update count badge
+        if (visibleCount === totalAssignments) {
+            countBadge.textContent = `${totalAssignments} Total`;
+        } else {
+            countBadge.textContent = `${visibleCount} of ${totalAssignments}`;
+        }
+    });
+});
+
+// Countdown timer
+document.querySelectorAll('.countdown[data-due]').forEach(el => {
+    const dueStr = el.dataset.due;
+    const dueDate = new Date(dueStr + 'T23:59:59');
+    const now = new Date();
+    const diff = dueDate - now;
+
+    if (diff <= 0) {
+        el.innerHTML = '<span>❌</span><span>Deadline passed</span>';
+        el.classList.add('urgent');
+    } else {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        
+        if (days === 0 && hours <= 24) {
+            el.innerHTML = `<span>⚠️</span><span>${hours} hour(s) left</span>`;
+            el.classList.add('urgent');
+        } else {
+            el.innerHTML = `<span>⏳</span><span>${days} day(s) ${hours} hr(s) left</span>`;
+        }
+    }
+});
+</script>
+
+</body>
+</html>

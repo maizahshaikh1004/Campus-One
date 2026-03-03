@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OTP Verification - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    transition: background 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Auth Card */
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 3rem;
+    text-align: center;
+}
+
+body.dark-mode .auth-card {
+    background: #1e293b;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+/* Logo/Icon */
+.auth-icon {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #2563eb, #8b5cf6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 8px 24px rgba(37,99,235,0.2);
+}
+
+body.dark-mode .auth-icon { box-shadow: 0 8px 24px rgba(96,165,250,0.3); }
+
+/* Headings */
+.auth-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.75rem;
+}
+
+body.dark-mode .auth-title { color: #f1f5f9; }
+
+.auth-subtitle {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+body.dark-mode .auth-subtitle { color: #94a3b8; }
+
+/* Error Message */
+.error-banner {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: left;
+}
+
+body.dark-mode .error-banner {
+    background: #7f1d1d30;
+    border-color: #991b1b;
+}
+
+.error-icon {
+    width: 36px;
+    height: 36px;
+    background: #fee2e2;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1rem;
+}
+
+body.dark-mode .error-icon { background: #7f1d1d; }
+
+.error-text {
+    font-size: 0.875rem;
+    color: #991b1b;
+    font-weight: 500;
+}
+
+body.dark-mode .error-text { color: #fca5a5; }
+
+/* OTP Input Group */
+.otp-group {
+    margin-bottom: 2rem;
+}
+
+.otp-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.75rem;
+    text-align: left;
+}
+
+body.dark-mode .otp-label { color: #94a3b8; }
+
+.otp-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 12px;
+    color: #1e293b;
+    background: #f8fafc;
+    font-family: 'Inter', monospace;
+    transition: all 0.2s;
+}
+
+body.dark-mode .otp-input {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+
+.otp-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+}
+
+body.dark-mode .otp-input:focus {
+    border-color: #60a5fa;
+    background: #1e293b;
+    box-shadow: 0 0 0 4px rgba(96,165,250,0.1);
+}
+
+.otp-input::placeholder { letter-spacing: 8px; color: #cbd5e1; }
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 0.875rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1.5rem;
+}
+
+.btn-submit:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+body.dark-mode .btn-submit { background: #60a5fa; color: #0f172a; }
+body.dark-mode .btn-submit:hover { background: #3b82f6; }
+
+/* Back Link */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.back-link:hover { color: #1d4ed8; }
+body.dark-mode .back-link { color: #60a5fa; }
+body.dark-mode .back-link:hover { color: #3b82f6; }
+
+/* Theme Toggle */
+.theme-toggle {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+body.dark-mode .theme-toggle {
+    background: #1e293b;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+/* Helper Text */
+.helper-text {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 0.5rem;
+    text-align: left;
+}
+
+body.dark-mode .helper-text { color: #64748b; }
+
+/* Resend Link */
+.resend-row {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+body.dark-mode .resend-row { border-top-color: #334155; color: #94a3b8; }
+
+.resend-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 0.3rem;
+}
+
+.resend-link:hover { text-decoration: underline; }
+body.dark-mode .resend-link { color: #60a5fa; }
+
+/* Responsive */
+@media (max-width: 480px) {
+    .auth-card { padding: 2rem 1.5rem; }
+    .auth-title { font-size: 1.5rem; }
+    .otp-input { font-size: 1.25rem; letter-spacing: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+    <span id="themeIcon">🌙</span>
+</button>
+
+<div class="auth-card">
+
+    <!-- Icon -->
+    <div class="auth-icon">🔐</div>
+
+    <!-- Heading -->
+    <h1 class="auth-title">OTP Verification</h1>
+    <p class="auth-subtitle">
+        Please enter the 6-digit code sent to your email
+    </p>
+
+    <!-- Error Message -->
+    {% if error %}
+    <div class="error-banner">
+        <div class="error-icon">⚠️</div>
+        <div class="error-text">{{ error }}</div>
+    </div>
+    {% endif %}
+
+    <!-- OTP Form -->
+    <form method="post" id="otpForm">
+        {% csrf_token %}
+
+        <div class="otp-group">
+            <label class="otp-label">Enter OTP</label>
+            <input
+                type="text"
+                name="otp"
+                id="otpInput"
+                class="otp-input"
+                maxlength="6"
+                pattern="[0-9]{6}"
+                inputmode="numeric"
+                placeholder="••••••"
+                autocomplete="off"
+                required
+            >
+            <div class="helper-text">💡 Check your email inbox or spam folder</div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+            Verify OTP
+        </button>
+    </form>
+
+    <!-- Back Link -->
+    <a href="{% url 'login' %}" class="back-link">
+        <span>←</span>
+        <span>Back to Login</span>
+    </a>
+
+    <!-- Resend (optional, uncomment if you have a resend view) -->
+    
+    <div class="resend-row">
+        Didn't receive the code?
+        <a href="{% url 'resend_otp' %}" class="resend-link">Resend OTP</a>
+    </div>
+    
+
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Auto-focus OTP input
+document.getElementById('otpInput').focus();
+
+// Only allow numbers
+document.getElementById('otpInput').addEventListener('input', function (e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+
+// Loading state on submit
+document.getElementById('otpForm').addEventListener('submit', function () {
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = 'Verifying...';
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+});
+</script>
+
+</body>
+</html>

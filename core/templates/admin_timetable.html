@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Timetable - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: scale(1.05); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.page-header p {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+body.dark-mode .page-header p { color: #94a3b8; }
+
+/* Table Card */
+.table-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+body.dark-mode .table-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.table-wrapper { overflow-x: auto; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+/* Header row */
+thead {
+    background: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+body.dark-mode thead {
+    background: #0f172a;
+    border-bottom-color: #334155;
+}
+
+th {
+    padding: 1rem 0.875rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+body.dark-mode th { color: #94a3b8; }
+
+th:first-child { text-align: left; }
+
+/* Day Badge */
+.day-badge {
+    display: inline-block;
+    padding: 0.3rem 0.875rem;
+    border-radius: 20px;
+    background: #dbeafe;
+    color: #1e40af;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+body.dark-mode .day-badge {
+    background: #1e3a8a;
+    color: #bfdbfe;
+}
+
+/* Today highlight */
+.day-badge.today {
+    background: #2563eb;
+    color: white;
+}
+
+body.dark-mode .day-badge.today {
+    background: #3b82f6;
+    color: white;
+}
+
+/* Table Body */
+tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.15s;
+}
+
+body.dark-mode tbody tr { border-bottom-color: #334155; }
+
+tbody tr:last-child { border-bottom: none; }
+
+tbody tr:hover { background: #f8fafc; }
+body.dark-mode tbody tr:hover { background: #334155; }
+
+td {
+    padding: 0.75rem 0.875rem;
+    vertical-align: top;
+    text-align: center;
+}
+
+/* Time Cell */
+.time-cell {
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #2563eb;
+    white-space: nowrap;
+    padding: 0.875rem 1rem;
+    min-width: 100px;
+}
+
+body.dark-mode .time-cell { color: #60a5fa; }
+
+/* Empty cell */
+.empty-slot {
+    color: #cbd5e1;
+    font-size: 1rem;
+}
+
+body.dark-mode .empty-slot { color: #334155; }
+
+/* Lecture Card */
+.lec-card {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-left: 3px solid #2563eb;
+    border-radius: 8px;
+    padding: 0.625rem 0.75rem;
+    margin-bottom: 0.5rem;
+    text-align: left;
+    transition: all 0.2s;
+    cursor: default;
+}
+
+.lec-card:last-child { margin-bottom: 0; }
+
+.lec-card:hover {
+    background: #e0f2fe;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(37,99,235,0.15);
+}
+
+body.dark-mode .lec-card {
+    background: #1e3a8a20;
+    border-color: #1e40af;
+    border-left-color: #60a5fa;
+}
+
+body.dark-mode .lec-card:hover {
+    background: #1e3a8a40;
+}
+
+/* Color variants for visual variety */
+.lec-card:nth-child(3n+2) {
+    background: #fdf4ff;
+    border-color: #e9d5ff;
+    border-left-color: #8b5cf6;
+}
+
+.lec-card:nth-child(3n+2):hover { background: #f3e8ff; }
+
+body.dark-mode .lec-card:nth-child(3n+2) {
+    background: #4c1d9520;
+    border-color: #4c1d95;
+    border-left-color: #a78bfa;
+}
+
+.lec-card:nth-child(3n+3) {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    border-left-color: #16a34a;
+}
+
+.lec-card:nth-child(3n+3):hover { background: #dcfce7; }
+
+body.dark-mode .lec-card:nth-child(3n+3) {
+    background: #14532d20;
+    border-color: #14532d;
+    border-left-color: #4ade80;
+}
+
+.lec-subject {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #0f172a;
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+}
+
+body.dark-mode .lec-subject { color: #f1f5f9; }
+
+.lec-meta {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 0.2rem;
+}
+
+body.dark-mode .lec-meta { color: #94a3b8; }
+
+.lec-faculty {
+    font-size: 0.75rem;
+    color: #475569;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+body.dark-mode .lec-faculty { color: #cbd5e1; }
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    gap: 1rem;
+}
+
+.empty-icon {
+    width: 72px;
+    height: 72px;
+    background: #f1f5f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+body.dark-mode .empty-icon { background: #334155; }
+
+.empty-state h3 { font-size: 1.1rem; font-weight: 600; color: #475569; }
+body.dark-mode .empty-state h3 { color: #94a3b8; }
+.empty-state p { font-size: 0.9rem; color: #94a3b8; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="{% url 'admin_dashboard' %}" class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h1>
+                <span>📅</span>
+                <span>Global Timetable</span>
+            </h1>
+            <p>All classes scheduled across departments and semesters</p>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+        {% if grid %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        {% for day in days %}
+                        <th>
+                            <span class="day-badge" id="day-{{ day }}">{{ day }}</span>
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in grid %}
+                    <tr>
+                        <td class="time-cell">{{ row.time }}</td>
+                        {% for cell in row.cells %}
+                        <td>
+                            {% if cell %}
+                                {% for lec in cell %}
+                                <div class="lec-card">
+                                    <div class="lec-subject">{{ lec.subject }}</div>
+                                    <div class="lec-meta">{{ lec.class }} · Sem {{ lec.semester }}</div>
+                                    <div class="lec-faculty">
+                                        <span>👤</span>
+                                        <span>{{ lec.faculty }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <span class="empty-slot">—</span>
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📅</div>
+            <h3>No Timetable Available</h3>
+            <p>No schedules have been added yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const body        = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Highlight today's column
+const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const todayName = days[new Date().getDay() - 1];
+const todayBadge = document.getElementById('day-' + todayName);
+if (todayBadge) todayBadge.classList.add('today');
+</script>
+
+</body>
+</html>

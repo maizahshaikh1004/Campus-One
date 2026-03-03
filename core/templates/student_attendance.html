@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Attendance - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .back-link { color: #60a5fa; }
+.back-link:hover { color: #1d4ed8; }
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: rotate(15deg); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+/* Container */
+.container { max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+/* Page Header */
+.page-header {
+    margin-bottom: 2.5rem;
+    animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+body.dark-mode .page-header h1 { color: #f1f5f9; }
+
+.page-header p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+body.dark-mode .page-header p { color: #94a3b8; }
+
+/* Overall Stats Card */
+.overall-stats {
+    background: linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 2.5rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.overall-stats::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.overall-stats-content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* Subject Cards */
+.subjects-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.subject-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.5s ease backwards;
+}
+
+body.dark-mode .subject-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.subject-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    transition: width 0.3s;
+    pointer-events: none;
+}
+
+.subject-card.good::before { background: #22c55e; }
+.subject-card.warning::before { background: #f59e0b; }
+.subject-card.critical::before { background: #ef4444; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.subject-card:nth-child(1) { animation-delay: 0.1s; }
+.subject-card:nth-child(2) { animation-delay: 0.15s; }
+.subject-card:nth-child(3) { animation-delay: 0.2s; }
+.subject-card:nth-child(4) { animation-delay: 0.25s; }
+.subject-card:nth-child(5) { animation-delay: 0.3s; }
+
+.subject-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.subject-info { flex: 1; }
+
+.subject-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.4rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    z-index: 2;
+}
+
+body.dark-mode .subject-name { color: #f1f5f9; }
+
+.subject-name:hover { color: #2563eb; }
+body.dark-mode .subject-name:hover { color: #60a5fa; }
+
+.subject-meta {
+    font-size: 0.85rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+body.dark-mode .subject-meta { color: #94a3b8; }
+
+.percentage-badge {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #0f172a;
+}
+
+body.dark-mode .percentage-badge { color: #f1f5f9; }
+
+/* Progress Section */
+.progress-section {
+    margin-bottom: 1.25rem;
+}
+
+.progress-bar-container {
+    height: 12px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+body.dark-mode .progress-bar-container { background: #334155; }
+
+.progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-good { background: linear-gradient(90deg, #22c55e, #16a34a); }
+.progress-warning { background: linear-gradient(90deg, #f59e0b, #d97706); }
+.progress-critical { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Footer */
+.subject-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-good {
+    background: #dcfce7;
+    color: #166534;
+}
+
+body.dark-mode .badge-good { background: #14532d; color: #86efac; }
+
+.badge-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+body.dark-mode .badge-warning { background: #78350f; color: #fde68a; }
+
+.badge-critical {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+body.dark-mode .badge-critical { background: #7f1d1d; color: #fca5a5; }
+
+.view-details {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: gap 0.3s;
+    position: relative;
+    z-index: 2;
+}
+
+body.dark-mode .view-details { color: #60a5fa; }
+.view-details:hover { gap: 0.5rem; }
+
+/* Empty State */
+.empty-state {
+    background: white;
+    border-radius: 16px;
+    padding: 5rem 2rem;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .empty-state {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-text {
+    color: #94a3b8;
+    font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .page-header h1 { font-size: 1.75rem; }
+    .overall-stats { padding: 2rem 1.5rem; }
+    .overall-stats-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="{% url 'student_dashboard' %}" class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<!-- Main -->
+<main class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>📊</span>
+            <span>My Attendance</span>
+        </h1>
+        <p>Track your attendance across all subjects</p>
+    </div>
+
+    <!-- Overall Stats -->
+    {% if attendance_data %}
+    <div class="overall-stats">
+        <div class="overall-stats-content" style="justify-content: center;">
+            <div class="stat-item">
+                <div class="stat-label">Total Subjects</div>
+                <div class="stat-value">{{ attendance_data|length }}</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Subjects List -->
+    <div class="subjects-list">
+        {% for a in attendance_data %}
+        <div class="subject-card {% if a.percentage >= 75 %}good{% elif a.percentage >= 50 %}warning{% else %}critical{% endif %}">
+            
+            <div class="subject-header">
+                <div class="subject-info">
+                    <a href="{% url 'student_attendance_detail' a.subject_id %}" class="subject-name">
+                        {{ a.subject_name }}
+                    </a>
+                    <div class="subject-meta">
+                        <span>📚</span>
+                        <span>{{ a.present }} / {{ a.total }} lectures attended</span>
+                    </div>
+                </div>
+                <div class="percentage-badge">{{ a.percentage }}%</div>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-bar-container">
+                    <div class="progress-bar {% if a.percentage >= 75 %}progress-good{% elif a.percentage >= 50 %}progress-warning{% else %}progress-critical{% endif %}"
+                         style="width: {{ a.percentage }}%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="subject-footer">
+                {% if a.percentage >= 75 %}
+                    <span class="status-badge badge-good">✓ Good Standing</span>
+                {% elif a.percentage >= 50 %}
+                    <span class="status-badge badge-warning">⚠️ Need Improvement</span>
+                {% else %}
+                    <span class="status-badge badge-critical">🔴 Critical</span>
+                {% endif %}
+                
+                <a href="{% url 'student_attendance_detail' a.subject_id %}" class="view-details">
+                    View Details →
+                </a>
+            </div>
+
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <div class="empty-icon">📊</div>
+            <div class="empty-text">No attendance data available yet</div>
+        </div>
+        {% endfor %}
+    </div>
+
+</main>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const body = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+</script>
+
+</body>
+</html>

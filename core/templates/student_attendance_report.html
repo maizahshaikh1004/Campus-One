@@ -1,0 +1,31 @@
+<h2>My Attendance Report</h2>
+
+{% if report %}
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Subject</th>
+        <th>Total Lectures</th>
+        <th>Present</th>
+        <th>Attendance %</th>
+        <th>Status</th>
+    </tr>
+
+    {% for r in report %}
+    <tr>
+        <td>{{ r.1 }}</td>
+        <td>{{ r.2 }}</td>
+        <td>{{ r.3 }}</td>
+        <td>{{ r.4 }}%</td>
+        <td>
+            {% if r.5 %}
+                <span style="color:red;">SHORT</span>
+            {% else %}
+                <span style="color:green;">OK</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No attendance data available.</p>
+{% endif %}

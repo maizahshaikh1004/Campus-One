@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode { background: #0f172a; color: #e2e8f0; }
+
+/* Navbar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+body.dark-mode .navbar { background: #1e293b; border-bottom: 1px solid #334155; }
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+body.dark-mode .logo { color: #f1f5f9; }
+
+.logo-icon {
+    font-size: 1.5rem;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.notif-btn {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    font-size: 1.1rem;
+    border: none;
+}
+
+body.dark-mode .notif-btn { background: #334155; }
+
+.notif-btn:hover {
+    background: #e2e8f0;
+    transform: scale(1.05);
+}
+
+body.dark-mode .notif-btn:hover { background: #475569; }
+
+.notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover { background: #e2e8f0; transform: rotate(15deg); }
+body.dark-mode .theme-toggle { background: #334155; }
+body.dark-mode .theme-toggle:hover { background: #475569; }
+
+.nav-link {
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+body.dark-mode .nav-link { color: #94a3b8; }
+.nav-link:hover { color: #2563eb; }
+body.dark-mode .nav-link:hover { color: #60a5fa; }
+
+/* Container */
+.container { max-width: 1400px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+/* Welcome Banner */
+.welcome-banner {
+    background: linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 2.5rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.welcome-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.welcome-banner::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -5%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+}
+
+.welcome-content { position: relative; z-index: 1; }
+
+.welcome-banner h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-banner p {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.5s ease backwards;
+}
+
+body.dark-mode .stat-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    transition: width 0.3s;
+}
+
+.stat-card.attendance::before { background: #8b5cf6; }
+.stat-card.subjects::before { background: #2563eb; }
+.stat-card.assignments::before { background: #ec4899; }
+.stat-card.notices::before { background: #f59e0b; }
+.stat-card.coordinator::before { background: #10b981; }
+.stat-card.timetable::before { background: #6366f1; }
+
+.stat-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+body.dark-mode .stat-card:hover { box-shadow: 0 12px 24px rgba(0,0,0,0.5); }
+
+.stat-card:hover::before { width: 100%; opacity: 0.1; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.15s; }
+.stat-card:nth-child(3) { animation-delay: 0.2s; }
+.stat-card:nth-child(4) { animation-delay: 0.25s; }
+.stat-card:nth-child(5) { animation-delay: 0.3s; }
+.stat-card:nth-child(6) { animation-delay: 0.35s; }
+
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: transform 0.3s;
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.stat-icon.purple { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
+.stat-icon.blue { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+.stat-icon.pink { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+.stat-icon.orange { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+.stat-icon.green { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+.stat-icon.indigo { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); }
+
+body.dark-mode .stat-icon.purple { background: linear-gradient(135deg, #6b21a8, #7c3aed); }
+body.dark-mode .stat-icon.blue { background: linear-gradient(135deg, #1e40af, #3b82f6); }
+body.dark-mode .stat-icon.pink { background: linear-gradient(135deg, #be185d, #ec4899); }
+body.dark-mode .stat-icon.orange { background: linear-gradient(135deg, #b45309, #f59e0b); }
+body.dark-mode .stat-icon.green { background: linear-gradient(135deg, #047857, #10b981); }
+body.dark-mode .stat-icon.indigo { background: linear-gradient(135deg, #4338ca, #6366f1); }
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+body.dark-mode .stat-label { color: #94a3b8; }
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #0f172a;
+}
+
+body.dark-mode .stat-value { color: #f1f5f9; }
+
+.stat-subtitle {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-top: 0.5rem;
+}
+
+/* Attendance Ring */
+.attendance-ring-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.attendance-ring {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #8b5cf6 0% {{ attendance_percentage }}%,
+        #e5e7eb {{ attendance_percentage }}% 100%
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-shrink: 0;
+    padding: 8px;
+}
+
+body.dark-mode .attendance-ring {
+    background: conic-gradient(
+        #8b5cf6 0% {{ attendance_percentage }}%,
+        #334155 {{ attendance_percentage }}% 100%
+    );
+}
+
+.attendance-ring::before {
+    content: '';
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: white;
+    position: absolute;
+    z-index: 1;
+}
+
+body.dark-mode .attendance-ring::before { background: #1e293b; }
+
+.attendance-percentage {
+    position: relative;
+    z-index: 2;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #8b5cf6;
+}
+
+/* Activity Cards */
+.activity-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 2rem;
+    animation: fadeIn 0.5s ease 0.4s backwards;
+}
+
+.activity-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .activity-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+body.dark-mode .activity-header { border-bottom-color: #334155; }
+
+.activity-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+body.dark-mode .activity-title { color: #f1f5f9; }
+
+.view-all-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: gap 0.3s;
+}
+
+body.dark-mode .view-all-link { color: #60a5fa; }
+.view-all-link:hover { gap: 0.5rem; }
+
+/* Activity Items */
+.activity-item {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    padding: 1.25rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    transition: all 0.3s;
+    border: 2px solid transparent;
+}
+
+body.dark-mode .activity-item { background: #0f172a; }
+
+.activity-item:hover {
+    background: #f1f5f9;
+    border-color: #2563eb;
+    transform: translateX(8px);
+}
+
+body.dark-mode .activity-item:hover {
+    background: #1e293b;
+    border-color: #60a5fa;
+}
+
+.activity-item-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.activity-info { flex: 1; }
+
+.activity-item-title {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+    color: #0f172a;
+}
+
+body.dark-mode .activity-item-title { color: #f1f5f9; }
+
+.activity-item-meta {
+    font-size: 0.85rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+body.dark-mode .activity-item-meta { color: #94a3b8; }
+
+.activity-badge {
+    padding: 0.4rem 0.875rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+body.dark-mode .badge-pending { background: #78350f; color: #fde68a; }
+
+.badge-event {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+body.dark-mode .badge-event { background: #1e3a8a; color: #bfdbfe; }
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.5;
+}
+
+.empty-text {
+    color: #94a3b8;
+    font-size: 0.95rem;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .activity-section { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    .nav-container { padding: 1rem; }
+    .welcome-banner {
+        padding: 2rem 1.5rem;
+    }
+    .welcome-banner h1 { font-size: 1.5rem; }
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .nav-link { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">
+            <span class="logo-icon">🎓</span>
+            <span>CampusOne</span>
+        </div>
+        <div class="nav-actions">
+            <a href="{% url 'notifications' %}" class="notif-btn">
+                🔔
+                {% if unread_count %}
+                <span class="notif-badge">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                <span id="themeIcon">🌙</span>
+            </button>
+            <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+            <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main -->
+<main class="container">
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+        <div class="welcome-content">
+            <h1>👋 Welcome back, {{name}}!</h1>
+            <p>Here's your academic overview for today</p>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+
+        <!-- Attendance -->
+        <div class="stat-card attendance" onclick="location.href='{% url 'student_attendance' %}'">
+            <div class="stat-label">Overall Attendance</div>
+            <div class="attendance-ring-wrapper">
+                <div class="attendance-ring">
+                    <span class="attendance-percentage">{{ attendance_percentage }}%</span>
+                </div>
+                <div>
+                    <div class="stat-subtitle">Keep it up!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subjects -->
+        <div class="stat-card subjects" onclick="location.href='{% url 'student_subjects' %}'">
+            <div class="stat-header">
+                <div class="stat-icon blue">📚</div>
+            </div>
+            <div class="stat-label">Subjects</div>
+            <div class="stat-value">{{ total_subjects }}</div>
+            <div class="stat-subtitle">This semester</div>
+        </div>
+
+        <!-- Pending Assignments -->
+        <div class="stat-card assignments" onclick="location.href='{% url 'student_pending_assignments' %}'">
+            <div class="stat-header">
+                <div class="stat-icon pink">📝</div>
+            </div>
+            <div class="stat-label">Pending</div>
+            <div class="stat-value">{{ pending_assignments_count }}</div>
+            <div class="stat-subtitle">Assignments due</div>
+        </div>
+
+        <!-- Notices -->
+        <div class="stat-card notices" onclick="location.href='{% url 'student_notices' %}'">
+            <div class="stat-header">
+                <div class="stat-icon orange">📢</div>
+            </div>
+            <div class="stat-label">Notices</div>
+            <div class="stat-value">📬</div>
+            <div class="stat-subtitle">Check updates</div>
+        </div>
+
+        <!-- Event Coordinator -->
+        <div class="stat-card coordinator" onclick="location.href='{% url 'student_coordinator_events' %}'">
+            <div class="stat-header">
+                <div class="stat-icon green">🎯</div>
+            </div>
+            <div class="stat-label">Coordinator</div>
+            <div class="stat-value">{{ coordinator_events_count }}</div>
+            <div class="stat-subtitle">Events managing</div>
+        </div>
+
+        <!-- Timetable -->
+        <div class="stat-card timetable" onclick="location.href='{% url 'student_timetable' %}'">
+            <div class="stat-header">
+                <div class="stat-icon indigo">🗓️</div>
+            </div>
+            <div class="stat-label">Timetable</div>
+            <div class="stat-value">📅</div>
+            <div class="stat-subtitle">Weekly schedule</div>
+        </div>
+
+    </div>
+
+    <!-- Activity Section -->
+    <div class="activity-section">
+
+        <!-- Pending Assignments -->
+        <div class="activity-card">
+            <div class="activity-header">
+                <h2 class="activity-title">Pending Assignments</h2>
+                <a href="/student/assignments/" class="view-all-link">View All →</a>
+            </div>
+
+            {% for a in pending_assignments %}
+            <a href="{% url 'submit_assignment' a.0 %}" class="activity-item">
+                <div class="activity-item-content">
+                    <div class="activity-info">
+                        <div class="activity-item-title">{{ a.1 }}</div>
+                        <div class="activity-item-meta">
+                            <span>📅</span>
+                            <span>Due: {{ a.2 }}</span>
+                        </div>
+                    </div>
+                    <span class="activity-badge badge-pending">Pending</span>
+                </div>
+            </a>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon">🎉</div>
+                <div class="empty-text">No pending assignments!<br>You're all caught up.</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="activity-card">
+            <div class="activity-header">
+                <h2 class="activity-title">Upcoming Events</h2>
+                <a href="{% url 'student_events' %}" class="view-all-link">View All →</a>
+            </div>
+
+            {% for e in upcoming_events %}
+            <a href="{% url 'event_detail' e.0 %}" class="activity-item">
+                <div class="activity-item-content">
+                    <div class="activity-info">
+                        <div class="activity-item-title">{{ e.1 }}</div>
+                        <div class="activity-item-meta">
+                            <span>📅</span>
+                            <span>{{ e.2 }}</span>
+                        </div>
+                    </div>
+                    <span class="activity-badge badge-event">Campus</span>
+                </div>
+            </a>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon">📅</div>
+                <div class="empty-text">No upcoming events</div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const body = document.body;
+
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// Notification refresh
+function refreshNotificationCount() {
+    fetch('/notifications/unread-count/')
+        .then(res => res.json())
+        .then(data => {
+            const badge = document.querySelector('.notif-badge');
+            if (data.count > 0) {
+                if (!badge) {
+                    const btn = document.querySelector('.notif-btn');
+                    const newBadge = document.createElement('span');
+                    newBadge.className = 'notif-badge';
+                    newBadge.textContent = data.count;
+                    btn.appendChild(newBadge);
+                } else {
+                    badge.textContent = data.count;
+                }
+            } else if (badge) {
+                badge.remove();
+            }
+        })
+        .catch(err => console.log('Could not refresh notification count'));
+}
+
+window.addEventListener('load', refreshNotificationCount);
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) refreshNotificationCount();
+});
+</script>
+
+</body>
+</html>

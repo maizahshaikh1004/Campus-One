@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile - CampusOne</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    color: #1e293b;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode */
+body.dark-mode {
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+/* Top Navigation Bar */
+.navbar {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+body.dark-mode .navbar {
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+}
+
+body.dark-mode .back-link {
+    color: #60a5fa;
+}
+
+.back-link:hover {
+    color: #1d4ed8;
+}
+
+.theme-toggle {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+    background: #e2e8f0;
+    transform: scale(1.05);
+}
+
+body.dark-mode .theme-toggle {
+    background: #334155;
+}
+
+body.dark-mode .theme-toggle:hover {
+    background: #475569;
+}
+
+/* Main Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Page Header */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.dark-mode .page-header h1 {
+    color: #f1f5f9;
+}
+
+/* Profile Card */
+.profile-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+}
+
+body.dark-mode .profile-card {
+    background: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Profile Header */
+.profile-header {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 2rem;
+}
+
+body.dark-mode .profile-header {
+    border-bottom-color: #334155;
+}
+
+.avatar-container {
+    position: relative;
+}
+
+.avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #2563eb;
+}
+
+body.dark-mode .avatar {
+    border-color: #60a5fa;
+}
+
+.no-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: 700;
+    color: white;
+}
+
+.profile-identity {
+    flex: 1;
+}
+
+.profile-name {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+}
+
+body.dark-mode .profile-name {
+    color: #f1f5f9;
+}
+
+.profile-role {
+    display: inline-block;
+    padding: 0.375rem 0.875rem;
+    background: #dbeafe;
+    color: #1e40af;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+body.dark-mode .profile-role {
+    background: #1e3a8a;
+    color: #bfdbfe;
+}
+
+.profile-email {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+body.dark-mode .profile-email {
+    color: #94a3b8;
+}
+
+/* Info Grid */
+.info-section {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+body.dark-mode .section-title {
+    color: #f1f5f9;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+body.dark-mode .info-label {
+    color: #94a3b8;
+}
+
+.info-value {
+    font-size: 0.95rem;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+body.dark-mode .info-value {
+    color: #e2e8f0;
+}
+
+.info-value.empty {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+/* Emergency Contacts */
+.contacts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.contact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+}
+
+body.dark-mode .contact-item {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+.contact-item:hover {
+    border-color: #2563eb;
+}
+
+body.dark-mode .contact-item:hover {
+    border-color: #60a5fa;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.contact-name {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+body.dark-mode .contact-name {
+    color: #f1f5f9;
+}
+
+.contact-phone {
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+body.dark-mode .contact-phone {
+    color: #94a3b8;
+}
+
+.btn-delete {
+    background: #fee2e2;
+    color: #991b1b;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+body.dark-mode .btn-delete {
+    background: #7f1d1d;
+    color: #fca5a5;
+}
+
+.btn-delete:hover {
+    background: #fecaca;
+    transform: translateY(-1px);
+}
+
+body.dark-mode .btn-delete:hover {
+    background: #991b1b;
+}
+
+.empty-contacts {
+    padding: 2rem;
+    text-align: center;
+    color: #94a3b8;
+    font-style: italic;
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+body.dark-mode .btn-primary {
+    background: #60a5fa;
+    color: #0f172a;
+}
+
+body.dark-mode .btn-primary:hover {
+    background: #3b82f6;
+}
+
+.btn-secondary {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+body.dark-mode .btn-secondary {
+    background: #334155;
+    color: #cbd5e1;
+    border-color: #475569;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #475569;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem 1rem;
+    }
+    
+    .nav-container {
+        padding: 1rem;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="
+{% if request.session.role == 'ADMIN' %}
+    {% url 'admin_dashboard' %}
+{% elif request.session.role == 'FACULTY' %}
+    {% url 'faculty_dashboard' %}
+{% else %}
+    {% url 'student_dashboard' %}
+{% endif %}
+" class="back-link">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+</nav>
+
+<!-- Main Container -->
+<div class="container">
+    
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <span>👤</span>
+            <span>My Profile</span>
+        </h1>
+    </div>
+
+    <!-- Profile Card -->
+    <div class="profile-card">
+        
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="avatar-container">
+                {% if profile and profile.0 %}
+                    <img src="/media/{{ profile.0 }}" class="avatar" alt="Profile photo">
+                {% else %}
+                    <div class="no-avatar">{{ user.0|slice:":1"|upper }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="profile-identity">
+                <h2 class="profile-name">{{ user.0 }}</h2>
+                <div class="profile-role">{{ user.2 }}</div>
+                <div class="profile-email">{{ user.1 }}</div>
+            </div>
+        </div>
+
+        <!-- Personal Information -->
+        <div class="info-section">
+            <h3 class="section-title">
+                <span>📋</span>
+                <span>Personal Information</span>
+            </h3>
+            <div class="info-grid">
+                {% if user.4 %}
+                <div class="info-item">
+                    <div class="info-label">Department</div>
+                    <div class="info-value">{{ user.4 }}</div>
+                </div>
+                {% endif %}
+
+                {% if user.5 %}
+                <div class="info-item">
+                    <div class="info-label">Semester</div>
+                    <div class="info-value">{{ user.5 }}</div>
+                </div>
+                {% endif %}
+
+                <div class="info-item">
+                    <div class="info-label">Phone Number</div>
+                    <div class="info-value {% if not profile.1 %}empty{% endif %}">
+                        {{ profile.1|default:"Not provided" }}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Address</div>
+                    <div class="info-value {% if not profile.2 %}empty{% endif %}">
+                        {{ profile.2|default:"Not provided" }}
+                    </div>
+                </div>
+
+                <div class="info-item" style="grid-column: 1 / -1;">
+                    <div class="info-label">Bio</div>
+                    <div class="info-value {% if not profile.3 %}empty{% endif %}">
+                        {{ profile.3|default:"No bio provided" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Contacts -->
+        <div class="info-section">
+            <h3 class="section-title">
+                <span>🚨</span>
+                <span>Emergency Contacts</span>
+            </h3>
+            
+            {% if emergency_contacts %}
+                <div class="contacts-list">
+                    {% for c in emergency_contacts %}
+                    <div class="contact-item">
+                        <div class="contact-info">
+                            <div class="contact-name">{{ c.1 }}</div>
+                            <div class="contact-phone">{{ c.2 }}</div>
+                        </div>
+                        <a href="{% url 'delete_emergency_contact' c.0 %}" class="btn-delete" onclick="return confirm('Remove this emergency contact?')">
+                            Remove
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-contacts">
+                    No emergency contacts added yet
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary">
+                <span>✏️</span>
+                <span>Edit Profile</span>
+            </a>
+            
+            {% if can_add_contact %}
+            <a href="{% url 'add_emergency_contact' %}" class="btn btn-secondary">
+                <span>➕</span>
+                <span>Add Emergency Contact</span>
+            </a>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+// Dark mode toggle functionality
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const body = document.body;
+
+// Check for saved theme preference or default to light mode
+const currentTheme = localStorage.getItem('theme') || 'light';
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    themeIcon.textContent = '☀️';
+}
+
+// Toggle theme on button click
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    
+    // Update icon and save preference
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+});
+</script>
+
+</body>
+</html>
